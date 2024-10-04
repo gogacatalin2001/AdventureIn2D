@@ -45,16 +45,6 @@ public class Player extends Entity {
                 x += speed;
             }
 
-            if (x <= 0) {
-                x = 0;
-            } else if (x > GamePanel.screenWidth) {
-                x = GamePanel.screenWidth;
-            } else if (y <= 0) {
-                y = 0;
-            } else if (y > GamePanel.screenHeight) {
-                y = GamePanel.screenHeight;
-            }
-
             // Change sprites for character movement
             spriteCounter++;
             if (spriteCounter > spriteUpdateSpeed) {
