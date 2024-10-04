@@ -1,26 +1,27 @@
+package main;
+
+import entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
 
     // SCREEN SETTINGS
-    final int originalTileSize = 16; // 16x16 tile
-    final int scale = 3;
-
-    final int tileSize = originalTileSize * scale;
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 12;
-    final int screenWidth = tileSize * maxScreenCol;
-    final int screenHeight = tileSize * maxScreenRow;
+    static final int originalTileSize = 16; // 16x16 tile
+    static final int scale = 3;
+    static final int maxScreenCol = 16;
+    static final int maxScreenRow = 12;
+    public static final int tileSize = originalTileSize * scale;
+    public static final int screenWidth = tileSize * maxScreenCol;
+    public static final int screenHeight = tileSize * maxScreenRow;
 
     final int FPS = 60;
 
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
+    Player player = new Player(this, keyHandler);
 
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -67,24 +68,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        if (keyHandler.isDownPressed()) {
-            playerY += playerSpeed;
-        } else if (keyHandler.isUpPressed()) {
-            playerY -= playerSpeed;
-        } else if (keyHandler.isLeftPressed()) {
-            playerX -= playerSpeed;
-        } else if (keyHandler.isRightPressed()) {
-            playerX += playerSpeed;
-        }
-
-//        if (playerX <= 0)
-//            playerX = 0;
-//        if (playerX > screenWidth)
-//            playerX = screenWidth;
-//        if (playerY <= 0)
-//            playerY = 0;
-//        if (playerY > screenHeight)
-//            playerY = screenHeight;
+        player.update();
     }
 
     @Override
@@ -93,8 +77,8 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.WHITE);
-        g2d.fillRect(playerX, playerY, tileSize, tileSize);
+        player.draw(g2d);
+
         g2d.dispose();
     }
 }
