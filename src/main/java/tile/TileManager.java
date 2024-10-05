@@ -24,9 +24,9 @@ public class TileManager {
     public TileManager(GamePanel gp) {
         this.gamePanel = gp;
         this.tiles = new ArrayList<>();
-        mapTileNumber = new int[GamePanel.maxScreenCol][GamePanel.maxScreenRow];
+        mapTileNumber = new int[GamePanel.maxWorldCol][GamePanel.maxWorldRow];
         getTileImage();
-        loadMap("/maps/map01.txt");
+        loadMap("/maps/world01.txt");
     }
 
     public void getTileImage() {
@@ -43,25 +43,50 @@ public class TileManager {
             waterTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/water00.png"));
             tiles.add(waterTile);
 
+            Tile earthTile = new Tile();
+            waterTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/earth.png"));
+            tiles.add(waterTile);
+
+            Tile treeTile = new Tile();
+            waterTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/tree.png"));
+            tiles.add(waterTile);
+
+            Tile sandTile = new Tile();
+            waterTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/sand.png"));
+            tiles.add(waterTile);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void draw(Graphics2D g2d) {
-        int row = 0, col = 0, x = 0, y = 0;
+        int worldRow = 0;
+        int worldCol = 0;
 
-        while (col < GamePanel.maxScreenCol && row < GamePanel.maxScreenRow) {
-            int tileNumber = mapTileNumber[col][row];
-            g2d.drawImage(tiles.get(tileNumber).image, x, y, GamePanel.tileSize, GamePanel.tileSize, null);
-            col++;
-            x += GamePanel.tileSize;
+        while (worldCol < GamePanel.maxWorldCol && worldRow < GamePanel.maxWorldRow) {
+            // Tile number from the map file
+            int tileNumber = mapTileNumber[worldCol][worldRow];
+            // Coordinates of the tile on the world map
+            int worldX = worldCol * GamePanel.tileSize;
+            int worldY = worldRow * GamePanel.tileSize;
+            // Coordinates of the tile on the screen
+            // Player is always in the center of the screen
+            int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
+            int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
 
-            if (col == GamePanel.maxScreenCol) {
-                col = 0;
-                x = 0;
-                row++;
-                y += GamePanel.tileSize;
+            if (worldX + GamePanel.tileSize > gamePanel.getPlayer().getWorldX() - gamePanel.getPlayer().getScreenX() &&
+                    worldX - GamePanel.tileSize < gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX() &&
+                    worldY + GamePanel.tileSize > gamePanel.getPlayer().getWorldY() - gamePanel.getPlayer().getScreenY() &&
+                    worldY - GamePanel.tileSize < gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY()
+            ) {
+                g2d.drawImage(tiles.get(tileNumber).image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+            }
+
+            worldCol++;
+            if (worldCol == GamePanel.maxWorldCol) {
+                worldCol = 0;
+                worldRow++;
             }
         }
     }
@@ -70,10 +95,10 @@ public class TileManager {
         try (InputStream inputStream = getClass().getResourceAsStream(mapFilePath);
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             int col = 0, row = 0;
-            while (col < GamePanel.maxScreenCol && row < GamePanel.maxScreenRow) {
+            while (col < GamePanel.maxWorldCol && row < GamePanel.maxWorldRow) {
                 String line = bufferedReader.readLine();
 
-                while (col < GamePanel.maxScreenCol) {
+                while (col < GamePanel.maxWorldCol) {
                     String[] numbers = line.split(" ");
                     int tileNumber = Integer.parseInt(numbers[col]);
                     mapTileNumber[col][row] = tileNumber;

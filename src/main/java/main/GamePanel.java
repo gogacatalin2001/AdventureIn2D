@@ -1,13 +1,13 @@
 package main;
 
 import entity.Player;
+import lombok.Getter;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
-
     // SCREEN SETTINGS
     public static final int originalTileSize = 16; // 16x16 tile
     public static final int scale = 3;
@@ -16,13 +16,19 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int tileSize = originalTileSize * scale;
     public static final int screenWidth = tileSize * maxScreenCol;
     public static final int screenHeight = tileSize * maxScreenRow;
+    public static final int FPS = 60;
 
-    final int FPS = 60;
+    // WORLD SETTINGS
+    public static final int maxWorldCol = 50;
+    public static final int maxWorldRow = 50;
+    public static final int worldWidth = tileSize * maxWorldCol;
+    public static final int worldHeight = tileSize * maxWorldRow;
 
-    KeyHandler keyHandler = new KeyHandler();
-    Thread gameThread;
-    Player player = new Player(this, keyHandler);
-    TileManager tileManager = new TileManager(this);
+    private final KeyHandler keyHandler = new KeyHandler();
+    private final TileManager tileManager = new TileManager(this);
+    @Getter
+    private final Player player = new Player(this, keyHandler);
+    private Thread gameThread;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -40,7 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        double drawInterval = 1000000000 / FPS;
+        double drawInterval = (double) 1000000000 / FPS;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;

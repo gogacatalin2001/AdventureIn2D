@@ -1,5 +1,6 @@
 package entity;
 
+import lombok.Getter;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -9,19 +10,29 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Player extends Entity {
+
+    // Position of the screen center
+    @Getter
+    int screenX;
+    @Getter
+    int screenY;
+
     GamePanel gamePanel;
     KeyHandler keyHandler;
 
     public Player(GamePanel g,  KeyHandler k) {
         this.gamePanel = g;
         this.keyHandler = k;
+        screenX = GamePanel.screenWidth / 2 - (GamePanel.tileSize / 2);
+        screenY = GamePanel.screenHeight / 2 - (GamePanel.tileSize / 2);
         setDefaultValues();
         getPlayerImage();
     }
 
     public void setDefaultValues() {
-        x = 100;
-        y = 100;
+        // Player starting position in world coordinates
+        worldX = GamePanel.tileSize * 23;
+        worldY = GamePanel.tileSize * 21;
         speed = 4;
         direction = Direction.DOWN;
     }
@@ -33,16 +44,16 @@ public class Player extends Entity {
             // Handle character movement
             if (keyHandler.isDownPressed()) {
                 direction = Direction.DOWN;
-                y += speed;
+                worldY += speed;
             } else if (keyHandler.isUpPressed()) {
                 direction = Direction.UP;
-                y -= speed;
+                worldY -= speed;
             } else if (keyHandler.isLeftPressed()) {
                 direction = Direction.LEFT;
-                x -= speed;
+                worldX -= speed;
             } else if (keyHandler.isRightPressed()) {
                 direction = Direction.RIGHT;
-                x += speed;
+                worldX += speed;
             }
 
             // Change sprites for character movement
@@ -110,6 +121,6 @@ public class Player extends Entity {
                 }
             }
         }
-        g2d.drawImage(image, x, y, GamePanel.tileSize, GamePanel.tileSize, null);
+        g2d.drawImage(image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
     }
 }
