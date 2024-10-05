@@ -6,14 +6,25 @@ import lombok.Setter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-@Getter
-@Setter
 public class KeyHandler implements KeyListener {
-
+    @Getter
+    @Setter
     private boolean upPressed;
+    @Getter
+    @Setter
     private boolean downPressed;
+    @Getter
+    @Setter
     private boolean leftPressed;
+    @Getter
+    @Setter
     private boolean rightPressed;
+
+    private GamePanel gamePanel;
+
+    public KeyHandler(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -36,6 +47,12 @@ public class KeyHandler implements KeyListener {
             }
             case KeyEvent.VK_D -> {
                 setRightPressed(true);
+            }
+            case KeyEvent.VK_UP -> {
+                gamePanel.zoomInOut(1);
+            }
+            case KeyEvent.VK_DOWN -> {
+                gamePanel.zoomInOut(-1);
             }
             default -> {}
         }

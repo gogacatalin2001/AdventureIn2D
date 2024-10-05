@@ -13,7 +13,7 @@ public class Entity {
     int spriteNumber = 1;
 
     // Position of the entity in the world
-    int worldX, worldY;
+    double worldX, worldY;
     int speed;
 
     BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;

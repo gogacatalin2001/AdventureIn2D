@@ -13,10 +13,7 @@ public class Player extends Entity {
 
     // Position of the screen center
     @Getter
-    int screenX;
-    @Getter
-    int screenY;
-
+    private int screenX, screenY;
     GamePanel gamePanel;
     KeyHandler keyHandler;
 
@@ -33,7 +30,7 @@ public class Player extends Entity {
         // Player starting position in world coordinates
         worldX = GamePanel.tileSize * 23;
         worldY = GamePanel.tileSize * 21;
-        speed = 4;
+        speed = GamePanel.worldWidth / 600;
         direction = Direction.DOWN;
     }
 

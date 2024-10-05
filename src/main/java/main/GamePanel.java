@@ -8,23 +8,22 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
-    // SCREEN SETTINGS
     public static final int originalTileSize = 16; // 16x16 tile
     public static final int scale = 3;
-    public static final int maxScreenCol = 16;
-    public static final int maxScreenRow = 12;
-    public static final int tileSize = originalTileSize * scale;
-    public static final int screenWidth = tileSize * maxScreenCol;
-    public static final int screenHeight = tileSize * maxScreenRow;
-    public static final int FPS = 60;
-
+    // SCREEN SETTINGS
+    public static int maxScreenCol = 16;
+    public static int maxScreenRow = 12;
+    public static int tileSize = originalTileSize * scale;
+    public static int screenWidth = tileSize * maxScreenCol;
+    public static int screenHeight = tileSize * maxScreenRow;
+    public static int FPS = 60;
     // WORLD SETTINGS
     public static final int maxWorldCol = 50;
     public static final int maxWorldRow = 50;
     public static final int worldWidth = tileSize * maxWorldCol;
     public static final int worldHeight = tileSize * maxWorldRow;
 
-    private final KeyHandler keyHandler = new KeyHandler();
+    private final KeyHandler keyHandler = new KeyHandler(this);
     private final TileManager tileManager = new TileManager(this);
     @Getter
     private final Player player = new Player(this, keyHandler);
@@ -42,7 +41,6 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread = new Thread(this);
         gameThread.start();
     }
-
 
     @Override
     public void run() {
@@ -67,7 +65,6 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             if (timer >= 1000000000) {
-                System.out.println("FPS: " + drawCount);
                 drawCount = 0;
                 timer = 0;
             }
@@ -90,4 +87,24 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2d.dispose();
     }
+
+    public void zoomInOut(int zoomValue) {
+        int oldWorldWidth = tileSize * maxWorldCol;
+        tileSize += zoomValue;
+        int newWorldWidth = tileSize * maxWorldCol;
+        // Scale the values
+        double multiplier = (double) newWorldWidth / oldWorldWidth;
+        double newPlayerWorldX = player.getWorldX() * multiplier;
+        double newPlayerWorldY = player.getWorldY() * multiplier;
+        // Update player position and speed
+        player.setSpeed(newWorldWidth / 600);
+        player.setWorldX(newPlayerWorldX);
+        player.setWorldY(newPlayerWorldY);
+
+        System.out.println("tileSize: " + tileSize);
+        System.out.println("worldWidth: " + newWorldWidth);
+        System.out.println("player worldX: " + player.getWorldX());
+
+    }
+
 }

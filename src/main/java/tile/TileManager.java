@@ -72,15 +72,15 @@ public class TileManager {
             int worldY = worldRow * GamePanel.tileSize;
             // Coordinates of the tile on the screen
             // Player is always in the center of the screen
-            int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
-            int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
+            double screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
+            double screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
 
             if (worldX + GamePanel.tileSize > gamePanel.getPlayer().getWorldX() - gamePanel.getPlayer().getScreenX() &&
                     worldX - GamePanel.tileSize < gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX() &&
                     worldY + GamePanel.tileSize > gamePanel.getPlayer().getWorldY() - gamePanel.getPlayer().getScreenY() &&
                     worldY - GamePanel.tileSize < gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY()
             ) {
-                g2d.drawImage(tiles.get(tileNumber).image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+                g2d.drawImage(tiles.get(tileNumber).image, (int) screenX, (int) screenY, GamePanel.tileSize, GamePanel.tileSize, null);
             }
 
             worldCol++;
