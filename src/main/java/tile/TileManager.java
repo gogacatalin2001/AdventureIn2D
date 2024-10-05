@@ -44,16 +44,16 @@ public class TileManager {
             tiles.add(waterTile);
 
             Tile earthTile = new Tile();
-            waterTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/earth.png"));
-            tiles.add(waterTile);
+            earthTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/earth.png"));
+            tiles.add(earthTile);
 
             Tile treeTile = new Tile();
-            waterTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/tree.png"));
-            tiles.add(waterTile);
+            treeTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/tree.png"));
+            tiles.add(treeTile);
 
             Tile sandTile = new Tile();
-            waterTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/sand.png"));
-            tiles.add(waterTile);
+            sandTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/sand.png"));
+            tiles.add(sandTile);
 
         } catch (IOException e) {
             e.printStackTrace();
