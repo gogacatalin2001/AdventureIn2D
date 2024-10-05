@@ -1,7 +1,5 @@
 package tile;
 
-import lombok.Getter;
-import lombok.Setter;
 import main.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -13,51 +11,59 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
 public class TileManager {
-
-    GamePanel gamePanel;
-    List<Tile> tiles;
-    int[][] mapTileNumber;
+    private final GamePanel gamePanel;
+    private List<Tile> tiles;
+    private int[][] mapTileNumber;
 
     public TileManager(GamePanel gp) {
         this.gamePanel = gp;
         this.tiles = new ArrayList<>();
         mapTileNumber = new int[GamePanel.maxWorldCol][GamePanel.maxWorldRow];
-        getTileImage();
+        loadTileImages();
         loadMap("/maps/world01.txt");
     }
 
-    public void getTileImage() {
+    public void loadTileImages() {
         try {
             Tile grassTile = new Tile();
-            grassTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/grass00.png"));
+            grassTile.setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/grass00.png")));
             tiles.add(grassTile);
 
             Tile wallTile = new Tile();
-            wallTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/wall.png"));
+            wallTile.setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/wall.png")));
+            wallTile.setCollisionEnabled(true);
             tiles.add(wallTile);
 
             Tile waterTile = new Tile();
-            waterTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/water00.png"));
+            waterTile.setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/water00.png")));
+            waterTile.setCollisionEnabled(true);
             tiles.add(waterTile);
 
             Tile earthTile = new Tile();
-            earthTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/earth.png"));
+            earthTile.setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/earth.png")));
             tiles.add(earthTile);
 
             Tile treeTile = new Tile();
-            treeTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/tree.png"));
+            treeTile.setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/tree.png")));
+            treeTile.setCollisionEnabled(true);
             tiles.add(treeTile);
 
             Tile sandTile = new Tile();
-            sandTile.image = ImageIO.read(getClass().getResourceAsStream("/tiles/sand.png"));
+            sandTile.setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/sand.png")));
             tiles.add(sandTile);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getTileNumber(int x, int y) {
+        return mapTileNumber[x][y];
+    }
+
+    public Tile getTile(int tileNumber) {
+        return tiles.get(tileNumber);
     }
 
     public void draw(Graphics2D g2d) {
@@ -80,7 +86,7 @@ public class TileManager {
                     worldY + GamePanel.tileSize > gamePanel.getPlayer().getWorldY() - gamePanel.getPlayer().getScreenY() &&
                     worldY - GamePanel.tileSize < gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY()
             ) {
-                g2d.drawImage(tiles.get(tileNumber).image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+                g2d.drawImage(tiles.get(tileNumber).getImage(), screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
             }
 
             worldCol++;

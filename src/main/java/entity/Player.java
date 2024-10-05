@@ -1,6 +1,8 @@
 package entity;
 
 import lombok.Getter;
+import lombok.Setter;
+import main.ColisionHandler;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -12,19 +14,24 @@ import java.io.IOException;
 public class Player extends Entity {
 
     // Position of the screen center
-    @Getter
-    int screenX;
-    @Getter
-    int screenY;
+    @Getter @Setter
+    private int screenX;
+    @Getter @Setter
+    private int screenY;
 
-    GamePanel gamePanel;
-    KeyHandler keyHandler;
+    private final KeyHandler keyHandler;
+    private final ColisionHandler colisionHandler;
 
-    public Player(GamePanel g,  KeyHandler k) {
-        this.gamePanel = g;
-        this.keyHandler = k;
+    public Player(KeyHandler kh, ColisionHandler ch) {
+        this.keyHandler = kh;
+        this.colisionHandler = ch;
         screenX = GamePanel.screenWidth / 2 - (GamePanel.tileSize / 2);
         screenY = GamePanel.screenHeight / 2 - (GamePanel.tileSize / 2);
+        int collisionBoxX = 8;
+        int collisionBoxY = 16;
+        int collisionBoxWidth = 32;
+        int collisionBoxHeight = 32;
+        collisionBox = new Rectangle(collisionBoxX, collisionBoxY, collisionBoxWidth, collisionBoxHeight);
         setDefaultValues();
         getPlayerImage();
     }
@@ -38,25 +45,30 @@ public class Player extends Entity {
     }
 
     public void update() {
-
+        // Only render tiles within the screen boundary
         if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
         keyHandler.isLeftPressed() || keyHandler.isRightPressed()) {
             // Handle character movement
-            if (keyHandler.isDownPressed()) {
-                direction = Direction.DOWN;
-                worldY += speed;
-            } else if (keyHandler.isUpPressed()) {
+             if (keyHandler.isUpPressed()) {
                 direction = Direction.UP;
-                worldY -= speed;
+            } else if (keyHandler.isDownPressed()) {
+                direction = Direction.DOWN;
             } else if (keyHandler.isLeftPressed()) {
                 direction = Direction.LEFT;
-                worldX -= speed;
             } else if (keyHandler.isRightPressed()) {
                 direction = Direction.RIGHT;
-                worldX += speed;
             }
 
-            // Change sprites for character movement
+            if (!colisionHandler.checkTileCollision(this)) {
+                switch (direction) {
+                    case UP -> worldY -= speed;
+                    case DOWN -> worldY += speed;
+                    case LEFT -> worldX -= speed;
+                    case RIGHT -> worldX += speed;
+                }
+            }
+
+            // Change between sprites for character movement
             spriteCounter++;
             if (spriteCounter > spriteUpdateSpeed) {
                 if (spriteNumber == 1) {

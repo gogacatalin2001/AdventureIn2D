@@ -26,8 +26,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     private final KeyHandler keyHandler = new KeyHandler();
     private final TileManager tileManager = new TileManager(this);
+    private final ColisionHandler colisionHandler = new ColisionHandler(this, tileManager);
     @Getter
-    private final Player player = new Player(this, keyHandler);
+    private final Player player = new Player(keyHandler, colisionHandler);
     private Thread gameThread;
 
     public GamePanel() {
@@ -51,9 +52,8 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;
-        int drawCount = 0;
 
-        while(gameThread != null) {
+        while (gameThread != null) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             timer += (currentTime - lastTime);
@@ -63,11 +63,9 @@ public class GamePanel extends JPanel implements Runnable {
                 update();
                 repaint();
                 delta--;
-                drawCount++;
             }
 
             if (timer >= 1000000000) {
-                drawCount = 0;
                 timer = 0;
             }
         }
