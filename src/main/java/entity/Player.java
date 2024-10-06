@@ -2,7 +2,7 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.ColisionHandler;
+import main.CollisionHandler;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -20,11 +20,11 @@ public class Player extends Entity {
     private int screenY;
 
     private final KeyHandler keyHandler;
-    private final ColisionHandler colisionHandler;
+    private final CollisionHandler collisionHandler;
 
-    public Player(KeyHandler kh, ColisionHandler ch) {
+    public Player(KeyHandler kh, CollisionHandler ch) {
         this.keyHandler = kh;
-        this.colisionHandler = ch;
+        this.collisionHandler = ch;
         screenX = GamePanel.screenWidth / 2 - (GamePanel.tileSize / 2);
         screenY = GamePanel.screenHeight / 2 - (GamePanel.tileSize / 2);
         int collisionBoxX = 8;
@@ -59,7 +59,7 @@ public class Player extends Entity {
                 direction = Direction.RIGHT;
             }
 
-            if (!colisionHandler.checkTileCollision(this)) {
+            if (!collisionHandler.checkTileCollision(this)) {
                 switch (direction) {
                     case UP -> worldY -= speed;
                     case DOWN -> worldY += speed;
@@ -83,14 +83,14 @@ public class Player extends Entity {
 
     public void getPlayerImage() {
         try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/player/BlueBoy/Walking/boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/player/BlueBoy/Walking/boy_up_2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/player/BlueBoy/Walking/boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/player/BlueBoy/Walking/boy_down_2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/player/BlueBoy/Walking/boy_left_1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/player/BlueBoy/Walking/boy_left_2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/player/BlueBoy/Walking/boy_right_1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/player/BlueBoy/Walking/boy_right_2.png"));
+            up1 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_up_1.png"));
+            up2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_up_2.png"));
+            down1 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_down_1.png"));
+            down2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_down_2.png"));
+            left1 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_left_1.png"));
+            left2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_left_2.png"));
+            right1 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_right_1.png"));
+            right2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_right_2.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

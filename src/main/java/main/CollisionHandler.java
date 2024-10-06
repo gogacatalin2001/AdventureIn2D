@@ -3,11 +3,11 @@ package main;
 import entity.Entity;
 import tile.TileManager;
 
-public class ColisionHandler {
+public class CollisionHandler {
     private final GamePanel gamePanel;
     private final TileManager tileManager;
 
-    public ColisionHandler(GamePanel gp, TileManager tm) {
+    public CollisionHandler(GamePanel gp, TileManager tm) {
         this.gamePanel = gp;
         this.tileManager = tm;
     }

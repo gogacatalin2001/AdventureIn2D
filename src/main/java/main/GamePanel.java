@@ -2,10 +2,14 @@ package main;
 
 import entity.Player;
 import lombok.Getter;
+import lombok.Setter;
+import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
     // SCREEN SETTINGS
@@ -26,10 +30,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     private final KeyHandler keyHandler = new KeyHandler();
     private final TileManager tileManager = new TileManager(this);
-    private final ColisionHandler colisionHandler = new ColisionHandler(this, tileManager);
+    private final CollisionHandler collisionHandler = new CollisionHandler(this, tileManager);
     @Getter
-    private final Player player = new Player(keyHandler, colisionHandler);
+    private final Player player = new Player(keyHandler, collisionHandler);
     private Thread gameThread;
+    private AssetHandler assetHandler = new AssetHandler(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -37,6 +42,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+    }
+
+    public void setupGame() {
+        assetHandler.setObjects();
     }
 
     public void startGameThread() {
@@ -81,8 +90,11 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
+        // TILE
         tileManager.draw(g2d);  // Background should be drawn before anything else
-
+        // OBJECT
+        assetHandler.drawObjects(g2d);
+        // PLAYER
         player.draw(g2d);
 
         g2d.dispose();
