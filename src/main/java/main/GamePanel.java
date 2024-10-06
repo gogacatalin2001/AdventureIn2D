@@ -2,14 +2,10 @@ package main;
 
 import entity.Player;
 import lombok.Getter;
-import lombok.Setter;
-import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
     // SCREEN SETTINGS
@@ -21,19 +17,17 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int screenWidth = tileSize * maxScreenCol;
     public static final int screenHeight = tileSize * maxScreenRow;
     public static final int FPS = 60;
-
     // WORLD SETTINGS
     public static final int maxWorldCol = 50;
     public static final int maxWorldRow = 50;
-    public static final int worldWidth = tileSize * maxWorldCol;
-    public static final int worldHeight = tileSize * maxWorldRow;
 
     private final KeyHandler keyHandler = new KeyHandler();
     private final TileManager tileManager = new TileManager(this);
     private final AssetHandler assetHandler = new AssetHandler(this);
     private final CollisionHandler collisionHandler = new CollisionHandler(this, tileManager, assetHandler);
+    private final SoundHandler soundHandler = new SoundHandler();
     @Getter
-    private final Player player = new Player(keyHandler, collisionHandler, assetHandler);
+    private final Player player = new Player(this, keyHandler, collisionHandler, assetHandler);
     private Thread gameThread;
 
     public GamePanel() {
@@ -46,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         assetHandler.setObjects();
+        playMusic(0);
     }
 
     public void startGameThread() {
@@ -98,5 +93,20 @@ public class GamePanel extends JPanel implements Runnable {
         player.draw(g2d);
 
         g2d.dispose();
+    }
+
+    public void playMusic(int index) {
+        soundHandler.setFile(index);
+        soundHandler.play();
+        soundHandler.loop();
+    }
+
+    public void stopMusic() {
+        soundHandler.stop();
+    }
+
+    public void playSoundEffect(int index) {
+        soundHandler.setFile(index);
+        soundHandler.play();
     }
 }

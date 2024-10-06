@@ -2,10 +2,7 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.AssetHandler;
-import main.CollisionHandler;
-import main.GamePanel;
-import main.KeyHandler;
+import main.*;
 import object.SuperObject;
 
 import javax.imageio.ImageIO;
@@ -14,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Player extends Entity {
+    private final GamePanel gamePanel;
     private final KeyHandler keyHandler;
     private final CollisionHandler collisionHandler;
     private final AssetHandler assetHandler;
@@ -28,7 +26,8 @@ public class Player extends Entity {
     @Setter
     private boolean collision = false;
 
-    public Player(KeyHandler kh, CollisionHandler ch, AssetHandler ah) {
+    public Player(GamePanel gp, KeyHandler kh, CollisionHandler ch, AssetHandler ah) {
+        this.gamePanel = gp;
         this.keyHandler = kh;
         this.collisionHandler = ch;
         this.assetHandler = ah;
@@ -73,7 +72,7 @@ public class Player extends Entity {
             collisionDetected = collisionHandler.checkTileCollision(this);
             // CHECK OBJECT COLLISION
             int collisionObjectIndex = collisionHandler.checkObjectCollision(this, true);
-            pickUpObject(collisionObjectIndex);
+            reactToObject(collisionObjectIndex);
 
             if (!collisionDetected) {
                 switch (direction) {
@@ -112,21 +111,28 @@ public class Player extends Entity {
         }
     }
 
-    public void pickUpObject(int objetIndex) {
+    public void reactToObject(int objetIndex) {
         if (objetIndex >= 0) {
             SuperObject collidedObject = assetHandler.getObjects().get(objetIndex);
             switch (collidedObject.getName()) {
                 case "Key" -> {
+                    gamePanel.playSoundEffect(1);
                     keyCount++;
                     assetHandler.deleteObject(objetIndex);
                     System.out.println("Picked up key!");
                 }
                 case "Door" -> {
                     if (keyCount > 0) {
+                        gamePanel.playSoundEffect(3);
                         keyCount--;
                         assetHandler.deleteObject(objetIndex);
                         System.out.println("Opened door. Remaining keys: " + keyCount);
                     }
+                }
+                case "Boots" -> {
+                    gamePanel.playSoundEffect(2);
+                    speed += 2;
+                    assetHandler.deleteObject(objetIndex);
                 }
             }
         }

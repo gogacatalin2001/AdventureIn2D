@@ -1,10 +1,7 @@
 package main;
 
 import lombok.Getter;
-import object.ChestObj;
-import object.DoorObj;
-import object.KeyObj;
-import object.SuperObject;
+import object.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -54,6 +51,11 @@ public class AssetHandler {
         chest.setWorldX(10 * GamePanel.tileSize);
         chest.setWorldY(7 * GamePanel.tileSize);
         objects.add(chest);
+
+        SuperObject boots = new BootsObj();
+        boots.setWorldX(37 * GamePanel.tileSize);
+        boots.setWorldY(42 * GamePanel.tileSize);
+        objects.add(boots);
     }
 
     public void drawObjects(Graphics2D g2d) {
