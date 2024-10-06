@@ -2,9 +2,11 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.AssetHandler;
 import main.CollisionHandler;
 import main.GamePanel;
 import main.KeyHandler;
+import object.SuperObject;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,26 +14,33 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Player extends Entity {
-
+    private final KeyHandler keyHandler;
+    private final CollisionHandler collisionHandler;
+    private final AssetHandler assetHandler;
     // Position of the screen center
     @Getter @Setter
     private int screenX;
     @Getter @Setter
     private int screenY;
+    @Getter
+    private int keyCount = 0;
+    @Getter
+    @Setter
+    private boolean collision = false;
 
-    private final KeyHandler keyHandler;
-    private final CollisionHandler collisionHandler;
-
-    public Player(KeyHandler kh, CollisionHandler ch) {
+    public Player(KeyHandler kh, CollisionHandler ch, AssetHandler ah) {
         this.keyHandler = kh;
         this.collisionHandler = ch;
+        this.assetHandler = ah;
         screenX = GamePanel.screenWidth / 2 - (GamePanel.tileSize / 2);
         screenY = GamePanel.screenHeight / 2 - (GamePanel.tileSize / 2);
-        int collisionBoxX = 8;
-        int collisionBoxY = 16;
-        int collisionBoxWidth = 32;
-        int collisionBoxHeight = 32;
-        collisionBox = new Rectangle(collisionBoxX, collisionBoxY, collisionBoxWidth, collisionBoxHeight);
+        collisionBox = new Rectangle();
+        collisionBox.x = 8;
+        collisionBox.y = 16;
+        collisionBoxDefaultX = collisionBox.x;
+        collisionBoxDefaultY = collisionBox.y;
+        collisionBox.width = 32;
+        collisionBox.height = 32;
         setDefaultValues();
         getPlayerImage();
     }
@@ -49,7 +58,7 @@ public class Player extends Entity {
         if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
         keyHandler.isLeftPressed() || keyHandler.isRightPressed()) {
             // Handle character movement
-             if (keyHandler.isUpPressed()) {
+            if (keyHandler.isUpPressed()) {
                 direction = Direction.UP;
             } else if (keyHandler.isDownPressed()) {
                 direction = Direction.DOWN;
@@ -59,7 +68,14 @@ public class Player extends Entity {
                 direction = Direction.RIGHT;
             }
 
-            if (!collisionHandler.checkTileCollision(this)) {
+            // CHECK TILE COLLISION
+            collisionDetected = false;
+            collisionDetected = collisionHandler.checkTileCollision(this);
+            // CHECK OBJECT COLLISION
+            int collisionObjectIndex = collisionHandler.checkObjectCollision(this, true);
+            pickUpObject(collisionObjectIndex);
+
+            if (!collisionDetected) {
                 switch (direction) {
                     case UP -> worldY -= speed;
                     case DOWN -> worldY += speed;
@@ -93,6 +109,26 @@ public class Player extends Entity {
             right2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_right_2.png"));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void pickUpObject(int objetIndex) {
+        if (objetIndex >= 0) {
+            SuperObject collidedObject = assetHandler.getObjects().get(objetIndex);
+            switch (collidedObject.getName()) {
+                case "Key" -> {
+                    keyCount++;
+                    assetHandler.deleteObject(objetIndex);
+                    System.out.println("Picked up key!");
+                }
+                case "Door" -> {
+                    if (keyCount > 0) {
+                        keyCount--;
+                        assetHandler.deleteObject(objetIndex);
+                        System.out.println("Opened door. Remaining keys: " + keyCount);
+                    }
+                }
+            }
         }
     }
 

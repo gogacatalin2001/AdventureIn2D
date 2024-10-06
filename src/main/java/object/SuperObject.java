@@ -12,9 +12,12 @@ public class SuperObject {
     BufferedImage image;
     String name;
     @Setter
-    boolean collision = false;
+    boolean collisionEnabled = false;
     @Setter
     int worldX, worldY;
+    Rectangle collisionBox = new Rectangle(0, 0, GamePanel.tileSize, GamePanel.tileSize);
+    int collisionBoxDefaultX = 0;
+    int collisionBoxDefaultY = 0;
 
     public void draw(Graphics2D g2d, GamePanel gamePanel) {
         int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();

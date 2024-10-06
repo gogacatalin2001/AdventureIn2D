@@ -17,6 +17,9 @@ public class Entity {
     int spriteNumber = 1;
     // MOVEMENT
     Rectangle collisionBox;
+    int collisionBoxDefaultX, collisionBoxDefaultY;
+    @Setter
+    boolean collisionDetected = false;
     @Setter
     int worldX, worldY; // Position of the entity in the world
     @Setter

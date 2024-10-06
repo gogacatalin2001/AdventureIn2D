@@ -30,11 +30,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     private final KeyHandler keyHandler = new KeyHandler();
     private final TileManager tileManager = new TileManager(this);
-    private final CollisionHandler collisionHandler = new CollisionHandler(this, tileManager);
+    private final AssetHandler assetHandler = new AssetHandler(this);
+    private final CollisionHandler collisionHandler = new CollisionHandler(this, tileManager, assetHandler);
     @Getter
-    private final Player player = new Player(keyHandler, collisionHandler);
+    private final Player player = new Player(keyHandler, collisionHandler, assetHandler);
     private Thread gameThread;
-    private AssetHandler assetHandler = new AssetHandler(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));

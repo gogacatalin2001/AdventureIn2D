@@ -1,15 +1,21 @@
 package main;
 
 import entity.Entity;
+import object.SuperObject;
 import tile.TileManager;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CollisionHandler {
     private final GamePanel gamePanel;
     private final TileManager tileManager;
+    private final AssetHandler assetHandler;
 
-    public CollisionHandler(GamePanel gp, TileManager tm) {
+    public CollisionHandler(GamePanel gp, TileManager tm, AssetHandler ah) {
         this.gamePanel = gp;
         this.tileManager = tm;
+        this.assetHandler = ah;
     }
 
     public boolean checkTileCollision(Entity entity) {
@@ -49,5 +55,72 @@ public class CollisionHandler {
         }
 
         return tileManager.getTile(tileNum1).isCollisionEnabled() || tileManager.getTile(tileNum2).isCollisionEnabled();
+    }
+
+    public int checkObjectCollision(Entity entity, boolean isPlayer) {
+        AtomicInteger objectIndex = new AtomicInteger(-1);
+        List<SuperObject> objects = assetHandler.getObjects();
+        objects.forEach(object -> {
+            // Get entity collisionEnabled box position
+            entity.getCollisionBox().x += entity.getWorldX();
+            entity.getCollisionBox().y += entity.getWorldY();
+            // Get object collisionEnabled box position
+            object.getCollisionBox().x += object.getWorldX();
+            object.getCollisionBox().y += object.getWorldY();
+            // Check the collisionEnabled
+            switch (entity.getDirection()) {
+                case UP -> {
+                    entity.getCollisionBox().y -= entity.getSpeed();
+                    if (entity.getCollisionBox().intersects(object.getCollisionBox())) {
+                        if (object.isCollisionEnabled()) {
+                            entity.setCollisionDetected(true);
+                        }
+                        if (isPlayer) {
+                            objectIndex.set(objects.indexOf(object));
+                        }
+                    }
+                }
+                case DOWN -> {
+                    entity.getCollisionBox().y += entity.getSpeed();
+                    if (entity.getCollisionBox().intersects(object.getCollisionBox())) {
+                        if (object.isCollisionEnabled()) {
+                            entity.setCollisionDetected(true);
+                        }
+                        if (isPlayer) {
+                            objectIndex.set(objects.indexOf(object));
+                        }
+                    }
+                }
+                case LEFT -> {
+                    entity.getCollisionBox().x -= entity.getSpeed();
+                    if (entity.getCollisionBox().intersects(object.getCollisionBox())) {
+                        if (object.isCollisionEnabled()) {
+                            entity.setCollisionDetected(true);
+                        }
+                        if (isPlayer) {
+                            objectIndex.set(objects.indexOf(object));
+                        }
+                    }
+                }
+                case RIGHT -> {
+                    entity.getCollisionBox().x += entity.getSpeed();
+                    if (entity.getCollisionBox().intersects(object.getCollisionBox())) {
+                        if (object.isCollisionEnabled()) {
+                            entity.setCollisionDetected(true);
+                        }
+                        if (isPlayer) {
+                            objectIndex.set(objects.indexOf(object));
+                        }
+                    }
+                }
+            }
+            // Reset collisionEnabled box coordinates after collisionEnabled check for each direction
+            entity.getCollisionBox().x = entity.getCollisionBoxDefaultX();
+            entity.getCollisionBox().y = entity.getCollisionBoxDefaultY();
+            object.getCollisionBox().x = object.getCollisionBoxDefaultX();
+            object.getCollisionBox().y = object.getCollisionBoxDefaultY();
+        });
+        System.out.println(objectIndex.get());
+        return objectIndex.get();
     }
 }
