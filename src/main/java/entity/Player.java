@@ -119,7 +119,7 @@ public class Player extends Entity {
                     gamePanel.playSoundEffect(1);
                     keyCount++;
                     assetHandler.deleteObject(objetIndex);
-                    System.out.println("Picked up key!");
+                    gamePanel.getUi().showMessage("You got a key!");
                 }
                 case "Door" -> {
                     if (keyCount > 0) {
@@ -127,12 +127,21 @@ public class Player extends Entity {
                         keyCount--;
                         assetHandler.deleteObject(objetIndex);
                         System.out.println("Opened door. Remaining keys: " + keyCount);
+                        gamePanel.getUi().showMessage("Door opened!");
+                    } else {
+                        gamePanel.getUi().showMessage("You need a key!");
                     }
                 }
                 case "Boots" -> {
                     gamePanel.playSoundEffect(2);
                     speed += 2;
                     assetHandler.deleteObject(objetIndex);
+                    gamePanel.getUi().showMessage("Speed increased!");
+                }
+                case "Chest" -> {
+                    gamePanel.getUi().setGameFinished(true);
+                    gamePanel.stopMusic();
+                    gamePanel.playSoundEffect(4);
                 }
             }
         }

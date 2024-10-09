@@ -2,12 +2,14 @@ package main;
 
 import entity.Player;
 import lombok.Getter;
+import lombok.Setter;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
+    // TODO: maybe add achievements (finish one level before the theme song finishes playing once??)
     // SCREEN SETTINGS
     public static final int originalTileSize = 16; // 16x16 tile
     public static final int scale = 3;
@@ -28,7 +30,11 @@ public class GamePanel extends JPanel implements Runnable {
     private final SoundHandler musicHandler = new SoundHandler();
     private final SoundHandler soundEffectHandler = new SoundHandler();
     @Getter
+    private final UI ui = new UI(this);
+    @Getter
     private final Player player = new Player(this, keyHandler, collisionHandler, assetHandler);
+    @Getter
+    @Setter
     private Thread gameThread;
 
     public GamePanel() {
@@ -92,6 +98,8 @@ public class GamePanel extends JPanel implements Runnable {
         assetHandler.drawObjects(g2d);
         // PLAYER
         player.draw(g2d);
+        // UI
+        ui.draw(g2d); // UI should be rendered over everything (last)
 
         g2d.dispose();
     }
