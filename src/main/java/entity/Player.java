@@ -15,10 +15,15 @@ public class Player extends Entity {
     private final KeyHandler keyHandler;
     private final CollisionHandler collisionHandler;
     private final AssetHandler assetHandler;
+    private int standCounter = 0;
+    private boolean moving = false;
+    private int pixelCounter = 0;
     // Position of the screen center
-    @Getter @Setter
+    @Getter
+    @Setter
     private int screenX;
-    @Getter @Setter
+    @Getter
+    @Setter
     private int screenY;
     @Getter
     private int keyCount = 0;
@@ -33,13 +38,15 @@ public class Player extends Entity {
         this.assetHandler = ah;
         screenX = GamePanel.screenWidth / 2 - (GamePanel.tileSize / 2);
         screenY = GamePanel.screenHeight / 2 - (GamePanel.tileSize / 2);
+
         collisionBox = new Rectangle();
-        collisionBox.x = 8;
-        collisionBox.y = 16;
+        collisionBox.x = 1;
+        collisionBox.y = 1;
         collisionBoxDefaultX = collisionBox.x;
         collisionBoxDefaultY = collisionBox.y;
-        collisionBox.width = 32;
-        collisionBox.height = 32;
+        collisionBox.width = GamePanel.tileSize - 2;
+        collisionBox.height = GamePanel.tileSize - 2;
+
         setDefaultValues();
         getPlayerImage();
     }
@@ -53,27 +60,34 @@ public class Player extends Entity {
     }
 
     public void update() {
-        // Only render tiles within the screen boundary
-        if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
-        keyHandler.isLeftPressed() || keyHandler.isRightPressed()) {
-            // Handle character movement
-            if (keyHandler.isUpPressed()) {
-                direction = Direction.UP;
-            } else if (keyHandler.isDownPressed()) {
-                direction = Direction.DOWN;
-            } else if (keyHandler.isLeftPressed()) {
-                direction = Direction.LEFT;
-            } else if (keyHandler.isRightPressed()) {
-                direction = Direction.RIGHT;
+        if (!moving) {
+            if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
+                    keyHandler.isLeftPressed() || keyHandler.isRightPressed()) {
+                moving = true;
+                // Handle character movement
+                if (keyHandler.isUpPressed()) {
+                    direction = Direction.UP;
+                } else if (keyHandler.isDownPressed()) {
+                    direction = Direction.DOWN;
+                } else if (keyHandler.isLeftPressed()) {
+                    direction = Direction.LEFT;
+                } else if (keyHandler.isRightPressed()) {
+                    direction = Direction.RIGHT;
+                }
+                // CHECK TILE COLLISION
+                collisionDetected = collisionHandler.checkTileCollision(this);
+                // CHECK OBJECT COLLISION
+                int collisionObjectIndex = collisionHandler.checkObjectCollision(this, true);
+                reactToObject(collisionObjectIndex);
+            } else {
+                standCounter++;
+                if (standCounter == 16) {
+                    spriteNumber = 1;
+                    standCounter = 0;
+                }
             }
-
-            // CHECK TILE COLLISION
-            collisionDetected = false;
-            collisionDetected = collisionHandler.checkTileCollision(this);
-            // CHECK OBJECT COLLISION
-            int collisionObjectIndex = collisionHandler.checkObjectCollision(this, true);
-            reactToObject(collisionObjectIndex);
-
+        } else {
+            // Only render tiles within the screen boundary
             if (!collisionDetected) {
                 switch (direction) {
                     case UP -> worldY -= speed;
@@ -82,7 +96,6 @@ public class Player extends Entity {
                     case RIGHT -> worldX += speed;
                 }
             }
-
             // Change between sprites for character movement
             spriteCounter++;
             if (spriteCounter > spriteUpdateSpeed) {
@@ -92,6 +105,12 @@ public class Player extends Entity {
                     spriteNumber = 1;
                 }
                 spriteCounter = 0;
+            }
+
+            pixelCounter += speed;
+            if (pixelCounter == GamePanel.tileSize) {
+                moving = false;
+                pixelCounter = 0;
             }
         }
     }
