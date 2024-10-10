@@ -3,9 +3,12 @@ package object;
 import lombok.Getter;
 import lombok.Setter;
 import main.GamePanel;
+import util.ImageScalingUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 @Getter
 public class SuperObject {
@@ -18,6 +21,16 @@ public class SuperObject {
     Rectangle collisionBox = new Rectangle(0, 0, GamePanel.tileSize, GamePanel.tileSize);
     int collisionBoxDefaultX = 0;
     int collisionBoxDefaultY = 0;
+
+    public SuperObject(String imageName, String objectName) {
+        try {
+            BufferedImage img = ImageIO.read(getClass().getResourceAsStream("/objects/" + imageName));
+            this.image = ImageScalingUtil.scaleImage(img, GamePanel.tileSize, GamePanel.tileSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.name = objectName;
+    }
 
     public void draw(Graphics2D g2d, GamePanel gamePanel) {
         int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();

@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import main.*;
 import object.SuperObject;
+import org.w3c.dom.css.CSSImportRule;
+import tile.Tile;
+import util.ImageScalingUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,9 +19,11 @@ public class Player extends Entity {
     private final CollisionHandler collisionHandler;
     private final AssetHandler assetHandler;
     // Position of the screen center
-    @Getter @Setter
+    @Getter
+    @Setter
     private int screenX;
-    @Getter @Setter
+    @Getter
+    @Setter
     private int screenY;
     @Getter
     private int keyCount = 0;
@@ -55,7 +60,7 @@ public class Player extends Entity {
     public void update() {
         // Only render tiles within the screen boundary
         if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
-        keyHandler.isLeftPressed() || keyHandler.isRightPressed()) {
+                keyHandler.isLeftPressed() || keyHandler.isRightPressed()) {
             // Handle character movement
             if (keyHandler.isUpPressed()) {
                 direction = Direction.UP;
@@ -97,18 +102,26 @@ public class Player extends Entity {
     }
 
     public void getPlayerImage() {
+        final String BOY_WALKING = "/BlueBoy/Walking/";
+        up1 = readImage(BOY_WALKING + "boy_up_1.png");
+        up2 = readImage(BOY_WALKING + "boy_up_2.png");
+        down1 = readImage(BOY_WALKING + "boy_down_1.png");
+        down2 = readImage(BOY_WALKING + "boy_down_2.png");
+        left1 = readImage(BOY_WALKING + "boy_left_1.png");
+        left2 = readImage(BOY_WALKING + "boy_left_2.png");
+        right1 = readImage(BOY_WALKING + "boy_right_1.png");
+        right2 = readImage(BOY_WALKING + "boy_right_2.png");
+    }
+
+    private BufferedImage readImage(String path) {
+        BufferedImage image = null;
         try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_up_2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_down_2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_left_1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_left_2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_right_1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/entities/BlueBoy/Walking/boy_right_2.png"));
+            image = ImageIO.read(getClass().getResourceAsStream("/entities" + path));
+            image = ImageScalingUtil.scaleImage(image, GamePanel.tileSize, GamePanel.tileSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return image;
     }
 
     public void reactToObject(int objetIndex) {
