@@ -112,15 +112,36 @@ public class TileManager {
             // Coordinates of the tile on the world map
             int worldX = worldCol * GamePanel.tileSize;
             int worldY = worldRow * GamePanel.tileSize;
-            // Coordinates of the tile on the screen
+            // SCREEN COORDINATES
             // Player is always in the center of the screen
             int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
             int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
+            // Stop moving camera at world edge
+            if (gamePanel.getPlayer().getScreenX() > gamePanel.getPlayer().getWorldX()) {
+                screenX = worldX;
+            }
+            if (gamePanel.getPlayer().getScreenY() > gamePanel.getPlayer().getWorldY()) {
+                screenY = worldY;
+            }
+            int rightOffset = GamePanel.screenWidth - gamePanel.getPlayer().getScreenX();
+            if (rightOffset > GamePanel.worldWidth - gamePanel.getPlayer().getWorldX()) {
+                screenX = GamePanel.screenWidth - (GamePanel.worldWidth - worldX);
+            }
+            int bottomOffset = GamePanel.screenHeight - gamePanel.getPlayer().getScreenY();
+            if (bottomOffset > GamePanel.worldHeight - gamePanel.getPlayer().getWorldY()) {
+                screenY = GamePanel.screenHeight - (GamePanel.worldHeight - worldY);
+            }
 
             if (worldX + GamePanel.tileSize > gamePanel.getPlayer().getWorldX() - gamePanel.getPlayer().getScreenX() &&
                     worldX - GamePanel.tileSize < gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX() &&
                     worldY + GamePanel.tileSize > gamePanel.getPlayer().getWorldY() - gamePanel.getPlayer().getScreenY() &&
                     worldY - GamePanel.tileSize < gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY()
+            ) {
+                g2d.drawImage(tiles.get(tileNumber).getImage(), screenX, screenY, null);
+            } else if (gamePanel.getPlayer().getScreenX() > gamePanel.getPlayer().getWorldX() ||
+                    gamePanel.getPlayer().getScreenY() > gamePanel.getPlayer().getWorldY() ||
+                    rightOffset > GamePanel.worldWidth - gamePanel.getPlayer().getWorldX() ||
+                    rightOffset > GamePanel.worldWidth - gamePanel.getPlayer().getWorldX()
             ) {
                 g2d.drawImage(tiles.get(tileNumber).getImage(), screenX, screenY, null);
             }

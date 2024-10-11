@@ -70,7 +70,7 @@ public class Player extends Entity {
 
             // CHECK TILE COLLISION
             collisionDetected = false;
-            collisionDetected = collisionHandler.checkTileCollision(this);
+//            collisionDetected = collisionHandler.checkTileCollision(this);
             // CHECK OBJECT COLLISION
             int collisionObjectIndex = collisionHandler.checkObjectCollision(this, true);
             reactToObject(collisionObjectIndex);
@@ -163,6 +163,25 @@ public class Player extends Entity {
                 }
             }
         }
-        g2d.drawImage(image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+
+        int x = screenX;
+        int y = screenY;
+
+        if (screenX > worldX) {
+            x = worldX;
+        }
+        if (screenY > worldY) {
+            y = worldY;
+        }
+        int rightOffset = GamePanel.screenWidth - screenX;
+        if (rightOffset > GamePanel.worldWidth - worldX) {
+            x = GamePanel.screenWidth - (GamePanel.worldWidth - worldX);
+        }
+        int bottomOffset = GamePanel.screenHeight - screenY;
+        if (bottomOffset > GamePanel.worldHeight - worldY) {
+            y = GamePanel.screenHeight - (GamePanel.worldHeight - worldY);
+        }
+
+        g2d.drawImage(image, x, y, GamePanel.tileSize, GamePanel.tileSize, null);
     }
 }
