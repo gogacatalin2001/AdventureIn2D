@@ -29,12 +29,12 @@ public class AssetHandler {
 
         SuperObject key3 = new KeyObj();
         key3.setWorldX(38 * GamePanel.tileSize);
-        key3.setWorldY(9 * GamePanel.tileSize);
+        key3.setWorldY(10 * GamePanel.tileSize);
         objects.add(key3);
 
         SuperObject door1 = new DoorObj();
         door1.setWorldX(12 * GamePanel.tileSize);
-        door1.setWorldY(22 * GamePanel.tileSize);
+        door1.setWorldY(23 * GamePanel.tileSize);
         objects.add(door1);
 
         SuperObject door2 = new DoorObj();
@@ -44,12 +44,12 @@ public class AssetHandler {
 
         SuperObject door3 = new DoorObj();
         door3.setWorldX(10 * GamePanel.tileSize);
-        door3.setWorldY(11 * GamePanel.tileSize);
+        door3.setWorldY(12 * GamePanel.tileSize);
         objects.add(door3);
 
         SuperObject chest = new ChestObj();
         chest.setWorldX(10 * GamePanel.tileSize);
-        chest.setWorldY(7 * GamePanel.tileSize);
+        chest.setWorldY(8 * GamePanel.tileSize);
         objects.add(chest);
 
         SuperObject boots = new BootsObj();

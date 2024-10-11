@@ -23,16 +23,62 @@ public class TileManager {
         this.tiles = new ArrayList<>();
         mapTileNumber = new int[GamePanel.maxWorldCol][GamePanel.maxWorldRow];
         loadTileImages();
-        loadMap("/maps/world01.txt");
+        loadMap("/maps/worldV2.txt");
     }
 
+    /**
+     * Loads tile images and populates the {@link #tiles} field.
+     * <p>
+     *     First 10 positions of the list are NOT used (map file contains
+     *     only 2-digit numbers for better readability).
+     * <p>
+     *     The index of a tile is used in {@link #draw(Graphics2D) drawing} the map.
+     */
     public void loadTileImages() {
+        // NOT USED
         createTile("grass00.png", false);
-        createTile("wall.png", true);
+        createTile("grass00.png", false);
+        createTile("grass00.png", false);
+        createTile("grass00.png", false);
+        createTile("grass00.png", false);
+        createTile("grass00.png", false);
+        createTile("grass00.png", false);
+        createTile("grass00.png", false);
+        createTile("grass00.png", false);
+        createTile("grass00.png", false);
+        // Tile numbers start from 10
+        createTile("grass00.png", false);
+        createTile("grass01.png", false);
         createTile("water00.png", true);
+        createTile("water01.png", true);
+        createTile("water02.png", true);
+        createTile("water03.png", true);
+        createTile("water04.png", true);
+        createTile("water05.png", true);
+        createTile("water06.png", true);
+        createTile("water07.png", true);
+        createTile("water08.png", true);
+        createTile("water09.png", true);
+        createTile("water10.png", true);
+        createTile("water11.png", true);
+        createTile("water12.png", true);
+        createTile("water13.png", true);
+        createTile("road00.png", false);
+        createTile("road01.png", false);
+        createTile("road02.png", false);
+        createTile("road03.png", false);
+        createTile("road04.png", false);
+        createTile("road05.png", false);
+        createTile("road06.png", false);
+        createTile("road07.png", false);
+        createTile("road08.png", false);
+        createTile("road09.png", false);
+        createTile("road10.png", false);
+        createTile("road11.png", false);
+        createTile("road12.png", false);
         createTile("earth.png", false);
+        createTile("wall.png", true);
         createTile("tree.png", true);
-        createTile("sand.png", false);
     }
 
     private void createTile(String imageFileName, boolean collisionEnabled) {
