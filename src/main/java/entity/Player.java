@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import main.*;
 import object.SuperObject;
-import org.w3c.dom.css.CSSImportRule;
-import tile.Tile;
 import util.ImageScalingUtil;
 
 import javax.imageio.ImageIO;
@@ -25,8 +23,6 @@ public class Player extends Entity {
     @Getter
     @Setter
     private int screenY;
-    @Getter
-    private int keyCount = 0;
     @Getter
     @Setter
     private boolean collision = false;
@@ -126,37 +122,7 @@ public class Player extends Entity {
 
     public void reactToObject(int objetIndex) {
         if (objetIndex >= 0) {
-            SuperObject collidedObject = assetHandler.getObjects().get(objetIndex);
-            switch (collidedObject.getName()) {
-                case "Key" -> {
-                    gamePanel.playSoundEffect(1);
-                    keyCount++;
-                    assetHandler.deleteObject(objetIndex);
-                    gamePanel.getUi().showMessage("You got a key!");
-                }
-                case "Door" -> {
-                    if (keyCount > 0) {
-                        gamePanel.playSoundEffect(3);
-                        keyCount--;
-                        assetHandler.deleteObject(objetIndex);
-                        System.out.println("Opened door. Remaining keys: " + keyCount);
-                        gamePanel.getUi().showMessage("Door opened!");
-                    } else {
-                        gamePanel.getUi().showMessage("You need a key!");
-                    }
-                }
-                case "Boots" -> {
-                    gamePanel.playSoundEffect(2);
-                    speed += 2;
-                    assetHandler.deleteObject(objetIndex);
-                    gamePanel.getUi().showMessage("Speed increased!");
-                }
-                case "Chest" -> {
-                    gamePanel.getUi().setGameFinished(true);
-                    gamePanel.stopMusic();
-                    gamePanel.playSoundEffect(4);
-                }
-            }
+
         }
     }
 

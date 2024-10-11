@@ -9,11 +9,15 @@ import java.awt.event.KeyListener;
 @Getter
 @Setter
 public class KeyHandler implements KeyListener {
-
+    private final GamePanel gamePanel;
     private boolean upPressed;
     private boolean downPressed;
     private boolean leftPressed;
     private boolean rightPressed;
+
+    public KeyHandler(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -36,6 +40,13 @@ public class KeyHandler implements KeyListener {
             }
             case KeyEvent.VK_D -> {
                 setRightPressed(true);
+            }
+            case KeyEvent.VK_ESCAPE -> {
+                if (gamePanel.getGameState() == GameState.PLAY) {
+                    gamePanel.setGameState(GameState.PAUSE);
+                } else {
+                    gamePanel.setGameState(GameState.PLAY);
+                }
             }
             default -> {}
         }

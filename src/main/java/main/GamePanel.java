@@ -22,8 +22,8 @@ public class GamePanel extends JPanel implements Runnable {
     // WORLD SETTINGS
     public static final int maxWorldCol = 50;
     public static final int maxWorldRow = 50;
-
-    private final KeyHandler keyHandler = new KeyHandler();
+    // GAME SYSTEM
+    private final KeyHandler keyHandler = new KeyHandler(this);
     private final TileManager tileManager = new TileManager(this);
     private final AssetHandler assetHandler = new AssetHandler(this);
     private final CollisionHandler collisionHandler = new CollisionHandler(this, tileManager, assetHandler);
@@ -32,10 +32,15 @@ public class GamePanel extends JPanel implements Runnable {
     @Getter
     private final UI ui = new UI(this);
     @Getter
-    private final Player player = new Player(this, keyHandler, collisionHandler, assetHandler);
-    @Getter
     @Setter
     private Thread gameThread;
+    // ENTITIES
+    @Getter
+    private final Player player = new Player(this, keyHandler, collisionHandler, assetHandler);
+    // GAME STATE
+    @Getter
+    @Setter
+    private GameState gameState;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -48,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         assetHandler.setObjects();
         playMusic(0);
+        gameState = GameState.PLAY;
     }
 
     public void startGameThread() {
@@ -83,7 +89,11 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        player.update();
+        if (gameState == GameState.PLAY) {
+            player.update();
+        } else if (gameState == GameState.PAUSE) {
+            // do nothing
+        }
     }
 
     @Override

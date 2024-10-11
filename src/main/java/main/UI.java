@@ -9,8 +9,8 @@ import java.awt.image.BufferedImage;
 
 public class UI {
     private final GamePanel gamePanel;
+    private Graphics2D g2d;
     private final Font ARIAL_40, ARIAL_80_B;
-    private final BufferedImage keyImage;
     private boolean displayMessage = false;
     private String message = "";
     private int messageDisplayCounter = 0;
@@ -23,9 +23,7 @@ public class UI {
         this.gamePanel = gamePanel;
         ARIAL_40 = new Font("Aerial", Font.PLAIN, 40);
         ARIAL_80_B = new Font("Aerial", Font.BOLD, 80);
-        keyImage = new KeyObj().getImage();
     }
-
 
     public void showMessage(String text) {
         message = text;
@@ -33,59 +31,30 @@ public class UI {
     }
 
     public void draw(Graphics2D g2d) {
-        int x;
-        int y;
-        String text;
-        int textLength;
+        this.g2d = g2d;
+        g2d.setFont(ARIAL_40);
+        g2d.setColor(Color.WHITE);
 
-        if (gameFinished) {
-            g2d.setFont(ARIAL_80_B);
-            g2d.setColor(Color.ORANGE);
-            text = "YOU WON!";
-            textLength = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
-            x = GamePanel.screenWidth / 2 - textLength / 2;
-            y = GamePanel.screenHeight / 2 - GamePanel.tileSize * 4;
-            g2d.drawString(text, x, y);
-
-            g2d.setFont(ARIAL_40);
-            g2d.setColor(Color.WHITE);
-            text = "You found the treasure!";
-            textLength = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
-            x = GamePanel.screenWidth / 2 - textLength / 2;
-            y = GamePanel.screenHeight / 2 - GamePanel.tileSize * 3;
-            g2d.drawString(text, x, y);
-
-            g2d.setFont(ARIAL_40);
-            g2d.setColor(Color.WHITE);
-            text = String.format("Your Time was: %.2f!", gameTime);
-            textLength = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
-            x = GamePanel.screenWidth / 2 - textLength / 2;
-            y = GamePanel.screenHeight / 2 - GamePanel.tileSize * 2;
-            g2d.drawString(text, x, y);
-
-            gamePanel.setGameThread(null);
-
+        // Handle game state
+        if (gamePanel.getGameState() == GameState.PLAY) {
+            // play state stuff
         } else {
-            g2d.setFont(ARIAL_40);
-            g2d.setColor(Color.WHITE);
-            g2d.drawImage(keyImage, GamePanel.tileSize / 2, GamePanel.tileSize / 2, GamePanel.tileSize, GamePanel.tileSize, null);
-            g2d.drawString("x " + gamePanel.getPlayer().getKeyCount(), 74, 65);
-
-            // TIME
-            gameTime += (double) 1 / 60;
-            g2d.drawString(String.format("Time: %.2f", gameTime), GamePanel.screenWidth - GamePanel.tileSize * 5, 65);
-
-            // MESSAGE
-            if (displayMessage) {
-                g2d.setFont(g2d.getFont().deriveFont(30F));
-                g2d.drawString(message, GamePanel.screenWidth / 2 - GamePanel.tileSize * 2, GamePanel.tileSize * 2);
-                messageDisplayCounter++;
-
-                if (messageDisplayCounter > 120) {
-                    displayMessage = false;
-                    messageDisplayCounter = 0;
-                }
-            }
+            drawPauseScreen();
         }
+    }
+
+    private void drawPauseScreen() {
+        g2d.setFont(g2d.getFont().deriveFont(Font.PLAIN, 80));
+        String text = "PAUSED";
+        int x, y;
+
+        x = getCenteredTextXCoordinate(text);
+        y = GamePanel.screenHeight / 2;
+        g2d.drawString(text, x, y);
+    }
+
+    public int getCenteredTextXCoordinate(String text) {
+        int textLength = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
+        return GamePanel.screenWidth / 2 - textLength / 2;
     }
 }
