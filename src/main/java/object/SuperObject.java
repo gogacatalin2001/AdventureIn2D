@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 @Getter
-public class SuperObject {
+public abstract class SuperObject {
     BufferedImage image;
     String name;
     @Setter
@@ -36,11 +36,7 @@ public class SuperObject {
         int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
         int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
 
-        if (worldX + GamePanel.tileSize > gamePanel.getPlayer().getWorldX() - gamePanel.getPlayer().getScreenX() &&
-                worldX - GamePanel.tileSize < gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX() &&
-                worldY + GamePanel.tileSize > gamePanel.getPlayer().getWorldY() - gamePanel.getPlayer().getScreenY() &&
-                worldY - GamePanel.tileSize < gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY()
-        ) {
+        if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
             g2d.drawImage(image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
         }
     }

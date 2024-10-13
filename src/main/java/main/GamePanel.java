@@ -1,5 +1,6 @@
 package main;
 
+import entity.Entity;
 import entity.Player;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,8 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
     // TODO: maybe add achievements (finish one level before the theme song finishes playing once??)
@@ -26,7 +29,8 @@ public class GamePanel extends JPanel implements Runnable {
     private final KeyHandler keyHandler = new KeyHandler(this);
     private final TileManager tileManager = new TileManager(this);
     private final AssetHandler assetHandler = new AssetHandler(this);
-    private final CollisionHandler collisionHandler = new CollisionHandler(this, tileManager, assetHandler);
+    @Getter
+    private final CollisionHandler collisionHandler = new CollisionHandler(tileManager, assetHandler);
     private final SoundHandler musicHandler = new SoundHandler();
     private final SoundHandler soundEffectHandler = new SoundHandler();
     @Getter
@@ -36,7 +40,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Thread gameThread;
     // ENTITIES
     @Getter
-    private final Player player = new Player(this, keyHandler, collisionHandler, assetHandler);
+    private final Player player = new Player(this, keyHandler, assetHandler);
     // GAME STATE
     @Getter
     @Setter
@@ -52,6 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         assetHandler.setObjects();
+        assetHandler.setNPC();
         playMusic(0);
         gameState = GameState.PLAY;
     }
@@ -91,6 +96,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         if (gameState == GameState.PLAY) {
             player.update();
+            assetHandler.getNpcs().forEach(Entity::update);
         } else if (gameState == GameState.PAUSE) {
             // do nothing
         }
@@ -106,12 +112,21 @@ public class GamePanel extends JPanel implements Runnable {
         tileManager.draw(g2d);  // Background should be drawn before anything else
         // OBJECT
         assetHandler.drawObjects(g2d);
+        // NPCs
+        assetHandler.drawNPCs(g2d);
         // PLAYER
         player.draw(g2d);
         // UI
         ui.draw(g2d); // UI should be rendered over everything (last)
 
         g2d.dispose();
+    }
+
+    public boolean isWhitinScreenBoundaries(int worldX, int worldY) {
+        return worldX + GamePanel.tileSize > player.getWorldX() - player.getScreenX() &&
+                worldX - GamePanel.tileSize < player.getWorldX() + player.getScreenX() &&
+                worldY + GamePanel.tileSize > player.getWorldY() - player.getScreenY() &&
+                worldY - GamePanel.tileSize < player.getWorldY() + player.getScreenY();
     }
 
     public void playMusic(int index) {

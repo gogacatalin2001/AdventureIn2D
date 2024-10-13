@@ -2,19 +2,18 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.*;
-import object.SuperObject;
-import util.ImageScalingUtil;
+import main.AssetHandler;
+import main.CollisionHandler;
+import main.GamePanel;
+import main.KeyHandler;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class Player extends Entity {
     private final GamePanel gamePanel;
     private final KeyHandler keyHandler;
-    private final CollisionHandler collisionHandler;
+
     private final AssetHandler assetHandler;
     // Position of the screen center
     @Getter
@@ -27,10 +26,10 @@ public class Player extends Entity {
     @Setter
     private boolean collision = false;
 
-    public Player(GamePanel gp, KeyHandler kh, CollisionHandler ch, AssetHandler ah) {
+    public Player(GamePanel gp, KeyHandler kh, AssetHandler ah) {
+        super(gp);
         this.gamePanel = gp;
         this.keyHandler = kh;
-        this.collisionHandler = ch;
         this.assetHandler = ah;
         screenX = GamePanel.screenWidth / 2 - (GamePanel.tileSize / 2);
         screenY = GamePanel.screenHeight / 2 - (GamePanel.tileSize / 2);
@@ -53,6 +52,18 @@ public class Player extends Entity {
         direction = Direction.DOWN;
     }
 
+    private void getPlayerImage() {
+        final String BOY_WALKING = "/entities/blue_boy/Walking/";
+        up1 = readImage(BOY_WALKING, "boy_up_1.png");
+        up2 = readImage(BOY_WALKING, "boy_up_2.png");
+        down1 = readImage(BOY_WALKING, "boy_down_1.png");
+        down2 = readImage(BOY_WALKING, "boy_down_2.png");
+        left1 = readImage(BOY_WALKING, "boy_left_1.png");
+        left2 = readImage(BOY_WALKING, "boy_left_2.png");
+        right1 = readImage(BOY_WALKING, "boy_right_1.png");
+        right2 = readImage(BOY_WALKING, "boy_right_2.png");
+    }
+
     public void update() {
         // Only render tiles within the screen boundary
         if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
@@ -64,17 +75,20 @@ public class Player extends Entity {
                 direction = Direction.DOWN;
             } else if (keyHandler.isLeftPressed()) {
                 direction = Direction.LEFT;
-            } else if (keyHandler.isRightPressed()) {
+            } else {
                 direction = Direction.RIGHT;
             }
 
             // CHECK TILE COLLISION
             collisionDetected = false;
-            collisionDetected = collisionHandler.checkTileCollision(this);
+            gamePanel.getCollisionHandler().checkTileCollision(this);
             // CHECK OBJECT COLLISION
-            int collisionObjectIndex = collisionHandler.checkObjectCollision(this, true);
+            int collisionObjectIndex = gamePanel.getCollisionHandler().checkObjectCollision(this, true);
             reactToObject(collisionObjectIndex);
-
+            // CHECK NPC COLLISION
+            int npcIndex = gamePanel.getCollisionHandler().checkEntityCollision(this);
+            interactNPC(npcIndex);
+            
             if (!collisionDetected) {
                 switch (direction) {
                     case UP -> worldY -= speed;
@@ -97,27 +111,10 @@ public class Player extends Entity {
         }
     }
 
-    public void getPlayerImage() {
-        final String BOY_WALKING = "/BlueBoy/Walking/";
-        up1 = readImage(BOY_WALKING + "boy_up_1.png");
-        up2 = readImage(BOY_WALKING + "boy_up_2.png");
-        down1 = readImage(BOY_WALKING + "boy_down_1.png");
-        down2 = readImage(BOY_WALKING + "boy_down_2.png");
-        left1 = readImage(BOY_WALKING + "boy_left_1.png");
-        left2 = readImage(BOY_WALKING + "boy_left_2.png");
-        right1 = readImage(BOY_WALKING + "boy_right_1.png");
-        right2 = readImage(BOY_WALKING + "boy_right_2.png");
-    }
-
-    private BufferedImage readImage(String path) {
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream("/entities" + path));
-            image = ImageScalingUtil.scaleImage(image, GamePanel.tileSize, GamePanel.tileSize);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void interactNPC(int npcIndex) {
+        if (npcIndex >= 0) {
+            System.out.println("NPC interaction: " + npcIndex);
         }
-        return image;
     }
 
     public void reactToObject(int objetIndex) {
@@ -128,41 +125,7 @@ public class Player extends Entity {
 
     public void draw(Graphics2D g2d) {
         // Draw player image
-        BufferedImage image = null;
-        switch (direction) {
-            case UP -> {
-                if (spriteNumber == 1) {
-                    image = up1;
-                }
-                if (spriteNumber == 2) {
-                    image = up2;
-                }
-            }
-            case DOWN -> {
-                if (spriteNumber == 1) {
-                    image = down1;
-                }
-                if (spriteNumber == 2) {
-                    image = down2;
-                }
-            }
-            case LEFT -> {
-                if (spriteNumber == 1) {
-                    image = left1;
-                }
-                if (spriteNumber == 2) {
-                    image = left2;
-                }
-            }
-            case RIGHT -> {
-                if (spriteNumber == 1) {
-                    image = right1;
-                }
-                if (spriteNumber == 2) {
-                    image = right2;
-                }
-            }
-        }
+        BufferedImage image = getSpriteImage();
         g2d.drawImage(image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
     }
 }
