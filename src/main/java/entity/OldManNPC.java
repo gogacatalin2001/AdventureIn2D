@@ -11,14 +11,14 @@ public class OldManNPC extends Entity {
         direction = Direction.DOWN;
         speed = 1;
         getEntityImage();
+        setDialogue();
     }
 
-    public void setAction() {
+    void setAction() {
         actionLockCounter++;
         if (actionLockCounter == 120 ) {
             Random random = new Random();
             int i = random.nextInt(100) + 1;
-
             if (i <= 25) {
                 direction = Direction.UP;
             } else if (i <= 50) {
@@ -30,6 +30,17 @@ public class OldManNPC extends Entity {
             }
             actionLockCounter = 0;
         }
+    }
+
+    void setDialogue() {
+        dialogues.add("Hello, lad!");
+        dialogues.add("So you've come to this island for the treasure?");
+        dialogues.add("I used to be a great wizard, but now I'm a bit too old \nfor adventures like these...");
+        dialogues.add("Well, I wish you good luck!");
+    }
+
+    public void speak() {
+        super.speak();
     }
 
     private void getEntityImage() {

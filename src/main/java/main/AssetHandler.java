@@ -23,6 +23,10 @@ public class AssetHandler {
 
     }
 
+    public SuperObject getObject(int index) {
+        return objects.get(index);
+    }
+
     public void drawObjects(Graphics2D g2d) {
         objects.forEach(obj -> obj.draw(g2d, gamePanel));
     }
@@ -30,9 +34,13 @@ public class AssetHandler {
     public void setNPC() {
 
         Entity oldMan = new OldManNPC(gamePanel);
-        oldMan.setWorldX(GamePanel.tileSize * 21);
-        oldMan.setWorldY(GamePanel.tileSize * 21);
+        oldMan.setWorldX(GamePanel.TILE_SIZE * 21);
+        oldMan.setWorldY(GamePanel.TILE_SIZE * 21);
         npcs.add(oldMan);
+    }
+
+    public Entity getNPC(int index) {
+        return npcs.get(index);
     }
 
     public void drawNPCs(Graphics2D g2d) {

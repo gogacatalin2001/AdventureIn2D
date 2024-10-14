@@ -21,7 +21,7 @@ public class TileManager {
     public TileManager(GamePanel gp) {
         this.gamePanel = gp;
         this.tiles = new ArrayList<>();
-        mapTileNumber = new int[GamePanel.maxWorldCol][GamePanel.maxWorldRow];
+        mapTileNumber = new int[GamePanel.MAX_WORLD_COL][GamePanel.MAX_WORLD_ROW];
         loadTileImages();
         loadMap("/maps/worldV2.txt");
     }
@@ -84,7 +84,7 @@ public class TileManager {
     private void createTile(String imageFileName, boolean collisionEnabled) {
         try {
             BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageFileName));
-            BufferedImage scaledImage = ImageScalingUtil.scaleImage(image, GamePanel.tileSize, GamePanel.tileSize);
+            BufferedImage scaledImage = ImageScalingUtil.scaleImage(image, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
             Tile tile = new Tile();
             tile.setImage(scaledImage);
             tile.setCollisionEnabled(collisionEnabled);
@@ -106,12 +106,12 @@ public class TileManager {
         int worldRow = 0;
         int worldCol = 0;
 
-        while (worldCol < GamePanel.maxWorldCol && worldRow < GamePanel.maxWorldRow) {
+        while (worldCol < GamePanel.MAX_WORLD_COL && worldRow < GamePanel.MAX_WORLD_ROW) {
             // Tile number from the map file
             int tileNumber = mapTileNumber[worldCol][worldRow];
             // Coordinates of the tile on the world map
-            int worldX = worldCol * GamePanel.tileSize;
-            int worldY = worldRow * GamePanel.tileSize;
+            int worldX = worldCol * GamePanel.TILE_SIZE;
+            int worldY = worldRow * GamePanel.TILE_SIZE;
             // Coordinates of the tile on the screen
             // Player is always in the center of the screen
             int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
@@ -122,7 +122,7 @@ public class TileManager {
             }
 
             worldCol++;
-            if (worldCol == GamePanel.maxWorldCol) {
+            if (worldCol == GamePanel.MAX_WORLD_COL) {
                 worldCol = 0;
                 worldRow++;
             }
@@ -133,10 +133,10 @@ public class TileManager {
         try (InputStream inputStream = getClass().getResourceAsStream(mapFilePath);
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             int col = 0, row = 0;
-            while (col < GamePanel.maxWorldCol && row < GamePanel.maxWorldRow) {
+            while (col < GamePanel.MAX_WORLD_COL && row < GamePanel.MAX_WORLD_ROW) {
                 String line = bufferedReader.readLine();
 
-                while (col < GamePanel.maxWorldCol) {
+                while (col < GamePanel.MAX_WORLD_COL) {
                     String[] numbers = line.split(" ");
                     int tileNumber = Integer.parseInt(numbers[col]);
                     mapTileNumber[col][row] = tileNumber;

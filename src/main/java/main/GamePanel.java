@@ -8,23 +8,21 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
     // TODO: maybe add achievements (finish one level before the theme song finishes playing once??)
     // SCREEN SETTINGS
-    public static final int originalTileSize = 16; // 16x16 tile
-    public static final int scale = 3;
-    public static final int maxScreenCol = 16;
-    public static final int maxScreenRow = 12;
-    public static final int tileSize = originalTileSize * scale;
-    public static final int screenWidth = tileSize * maxScreenCol;
-    public static final int screenHeight = tileSize * maxScreenRow;
+    public static final int ORIGINAL_TILE_SIZE = 16; // 16x16 tile
+    public static final int SCALE = 3;
+    public static final int MAX_SCREEN_COL = 16;
+    public static final int MAX_SCREEN_ROW = 12;
+    public static final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE;
+    public static final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;
+    public static final int SCREEN_HEIGHT = TILE_SIZE * MAX_SCREEN_ROW;
     public static final int FPS = 60;
     // WORLD SETTINGS
-    public static final int maxWorldCol = 50;
-    public static final int maxWorldRow = 50;
+    public static final int MAX_WORLD_COL = 50;
+    public static final int MAX_WORLD_ROW = 50;
     // GAME SYSTEM
     private final KeyHandler keyHandler = new KeyHandler(this);
     private final TileManager tileManager = new TileManager(this);
@@ -47,18 +45,19 @@ public class GamePanel extends JPanel implements Runnable {
     private GameState gameState;
 
     public GamePanel() {
-        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+        this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+        setupGame();
     }
 
     public void setupGame() {
+        gameState = GameState.PLAY;
         assetHandler.setObjects();
         assetHandler.setNPC();
         playMusic(0);
-        gameState = GameState.PLAY;
     }
 
     public void startGameThread() {
@@ -123,10 +122,10 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public boolean isWhitinScreenBoundaries(int worldX, int worldY) {
-        return worldX + GamePanel.tileSize > player.getWorldX() - player.getScreenX() &&
-                worldX - GamePanel.tileSize < player.getWorldX() + player.getScreenX() &&
-                worldY + GamePanel.tileSize > player.getWorldY() - player.getScreenY() &&
-                worldY - GamePanel.tileSize < player.getWorldY() + player.getScreenY();
+        return worldX + GamePanel.TILE_SIZE > player.getWorldX() - player.getScreenX() &&
+                worldX - GamePanel.TILE_SIZE < player.getWorldX() + player.getScreenX() &&
+                worldY + GamePanel.TILE_SIZE > player.getWorldY() - player.getScreenY() &&
+                worldY - GamePanel.TILE_SIZE < player.getWorldY() + player.getScreenY();
     }
 
     public void playMusic(int index) {

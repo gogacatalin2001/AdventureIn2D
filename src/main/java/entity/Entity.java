@@ -2,7 +2,6 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.CollisionHandler;
 import main.GamePanel;
 import util.ImageScalingUtil;
 
@@ -10,6 +9,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 @Getter
 public abstract class Entity {
@@ -32,18 +34,16 @@ public abstract class Entity {
     int speed;
     @Setter
     Direction direction;
+    // NPC INTERACTIONS
+    List<String> dialogues = new ArrayList<>();
+    int dialogueIndex = 0;
 
     public Entity(GamePanel gp) {
         this.gamePanel = gp;
     }
 
-    public void setAction() {
-
-    }
-
     public void update() {
         setAction();
-
         // CHECK TILE COLLISION
         collisionDetected = false;
         gamePanel.getCollisionHandler().checkTileCollision(this);
@@ -80,7 +80,26 @@ public abstract class Entity {
 
         if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
             BufferedImage image = getSpriteImage();
-            g2d.drawImage(image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+            g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
+        }
+    }
+
+    void setAction() {
+
+    }
+
+    public void speak() {
+        if (dialogueIndex == dialogues.size()) {
+            dialogueIndex = 0;
+        }
+        gamePanel.getUi().setCurrentDialogue(dialogues.get(dialogueIndex));
+        dialogueIndex++;
+
+        switch (gamePanel.getPlayer().getDirection()) {
+            case UP -> direction = Direction.DOWN;
+            case DOWN -> direction = Direction.UP;
+            case LEFT -> direction = Direction.RIGHT;
+            case RIGHT -> direction = Direction.LEFT;
         }
     }
 
@@ -88,7 +107,7 @@ public abstract class Entity {
         BufferedImage image = null;
         try {
             image = ImageIO.read(getClass().getResourceAsStream(basePath + imageName));
-            image = ImageScalingUtil.scaleImage(image, GamePanel.tileSize, GamePanel.tileSize);
+            image = ImageScalingUtil.scaleImage(image, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
         } catch (IOException e) {
             e.printStackTrace();
         }

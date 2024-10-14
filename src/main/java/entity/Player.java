@@ -2,10 +2,7 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.AssetHandler;
-import main.CollisionHandler;
-import main.GamePanel;
-import main.KeyHandler;
+import main.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,8 +28,8 @@ public class Player extends Entity {
         this.gamePanel = gp;
         this.keyHandler = kh;
         this.assetHandler = ah;
-        screenX = GamePanel.screenWidth / 2 - (GamePanel.tileSize / 2);
-        screenY = GamePanel.screenHeight / 2 - (GamePanel.tileSize / 2);
+        screenX = GamePanel.SCREEN_WIDTH / 2 - (GamePanel.TILE_SIZE / 2);
+        screenY = GamePanel.SCREEN_HEIGHT / 2 - (GamePanel.TILE_SIZE / 2);
         collisionBox = new Rectangle();
         collisionBox.x = 8;
         collisionBox.y = 16;
@@ -46,8 +43,8 @@ public class Player extends Entity {
 
     public void setDefaultValues() {
         // Player starting position in world coordinates
-        worldX = GamePanel.tileSize * 23;
-        worldY = GamePanel.tileSize * 21;
+        worldX = GamePanel.TILE_SIZE * 23;
+        worldY = GamePanel.TILE_SIZE * 21;
         speed = 4;
         direction = Direction.DOWN;
     }
@@ -113,7 +110,11 @@ public class Player extends Entity {
 
     private void interactNPC(int npcIndex) {
         if (npcIndex >= 0) {
-            System.out.println("NPC interaction: " + npcIndex);
+            if (keyHandler.isEnterPressed()) {
+                gamePanel.setGameState(GameState.DIALOG);
+                assetHandler.getNPC(npcIndex).speak();
+            }
+            keyHandler.setEnterPressed(false);
         }
     }
 
@@ -126,6 +127,6 @@ public class Player extends Entity {
     public void draw(Graphics2D g2d) {
         // Draw player image
         BufferedImage image = getSpriteImage();
-        g2d.drawImage(image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+        g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
     }
 }

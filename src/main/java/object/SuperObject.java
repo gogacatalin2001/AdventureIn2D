@@ -18,14 +18,14 @@ public abstract class SuperObject {
     boolean collisionEnabled = false;
     @Setter
     int worldX, worldY;
-    Rectangle collisionBox = new Rectangle(0, 0, GamePanel.tileSize, GamePanel.tileSize);
+    Rectangle collisionBox = new Rectangle(0, 0, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
     int collisionBoxDefaultX = 0;
     int collisionBoxDefaultY = 0;
 
     public SuperObject(String imageName, String objectName) {
         try {
             BufferedImage img = ImageIO.read(getClass().getResourceAsStream("/objects/" + imageName));
-            this.image = ImageScalingUtil.scaleImage(img, GamePanel.tileSize, GamePanel.tileSize);
+            this.image = ImageScalingUtil.scaleImage(img, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,7 +37,7 @@ public abstract class SuperObject {
         int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
 
         if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
-            g2d.drawImage(image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+            g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
         }
     }
 }

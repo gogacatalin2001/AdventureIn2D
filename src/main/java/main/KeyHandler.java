@@ -14,6 +14,7 @@ public class KeyHandler implements KeyListener {
     private boolean downPressed;
     private boolean leftPressed;
     private boolean rightPressed;
+    private boolean enterPressed;
 
     public KeyHandler(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -27,28 +28,28 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-
-        switch (code) {
-            case KeyEvent.VK_W -> {
-                setUpPressed(true);
-            }
-            case KeyEvent.VK_A -> {
-                setLeftPressed(true);
-            }
-            case KeyEvent.VK_S -> {
-                setDownPressed(true);
-            }
-            case KeyEvent.VK_D -> {
-                setRightPressed(true);
-            }
-            case KeyEvent.VK_ESCAPE -> {
-                if (gamePanel.getGameState() == GameState.PLAY) {
-                    gamePanel.setGameState(GameState.PAUSE);
-                } else {
-                    gamePanel.setGameState(GameState.PLAY);
+        switch (gamePanel.getGameState()) {
+            case PLAY -> {
+                switch (code) {
+                    case KeyEvent.VK_W -> setUpPressed(true);
+                    case KeyEvent.VK_A -> setLeftPressed(true);
+                    case KeyEvent.VK_S -> setDownPressed(true);
+                    case KeyEvent.VK_D -> setRightPressed(true);
+                    case KeyEvent.VK_ESCAPE -> gamePanel.setGameState(GameState.PAUSE);
+                    case KeyEvent.VK_ENTER -> setEnterPressed(true);
                 }
             }
-            default -> {}
+            case PAUSE -> {
+                switch (code) {
+                    case KeyEvent.VK_ESCAPE -> gamePanel.setGameState(GameState.PLAY);
+                }
+            }
+            case DIALOG -> {
+                switch (code) {
+                    case KeyEvent.VK_ENTER -> gamePanel.setGameState(GameState.PLAY);
+                }
+            }
+
         }
     }
 
