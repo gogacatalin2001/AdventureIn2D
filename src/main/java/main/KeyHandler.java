@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.function.Predicate;
 
 @Getter
 @Setter
@@ -47,6 +48,24 @@ public class KeyHandler implements KeyListener {
             case DIALOG -> {
                 switch (code) {
                     case KeyEvent.VK_ENTER -> gamePanel.setGameState(GameState.PLAY);
+                }
+            }
+            case TITLE_SCREEN -> {
+                switch (code) {
+                    case KeyEvent.VK_UP -> gamePanel.getUi().changeCommand(-1);
+                    case KeyEvent.VK_DOWN -> gamePanel.getUi().changeCommand(1);
+                    case KeyEvent.VK_ENTER -> {
+                        switch (gamePanel.getUi().getCurrentCommand()) {
+                            case NEW_GAME -> {
+                                gamePanel.setGameState(GameState.PLAY);
+                                gamePanel.playMusic(0);
+                            }
+                            case LOAD_GAME -> {
+                                // todo add game loading
+                            }
+                            case QUIT -> System.exit(0);
+                        }
+                    }
                 }
             }
 

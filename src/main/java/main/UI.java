@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,15 +11,14 @@ public class UI {
     private final GamePanel gamePanel;
     private Graphics2D g2d;
     private Font PRUISA_B;
-    private boolean displayMessage = false;
-    private String message = "";
-    private int messageDisplayCounter = 0;
     @Getter
     @Setter
     private String currentDialogue = "";
     @Getter
     @Setter
     private boolean gameFinished = false;
+    @Getter
+    private Command currentCommand = Command.NONE;
 
     public UI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -37,12 +35,6 @@ public class UI {
         }
     }
 
-
-    public void showMessage(String text) {
-        message = text;
-        displayMessage = true;
-    }
-
     public int getCenteredTextXCoordinate(String text) {
         int textLength = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
         return GamePanel.SCREEN_WIDTH / 2 - textLength / 2;
@@ -55,9 +47,68 @@ public class UI {
         g2d.setColor(Color.WHITE);
 
         switch (gamePanel.getGameState()) {
-            case PLAY -> {}
+            case TITLE_SCREEN -> drawTitleScreen();
             case PAUSE -> drawPauseScreen();
             case DIALOG -> drawDialogueScreen();
+        }
+    }
+
+    public void changeCommand(int direction) {
+        int index = currentCommand.ordinal();
+        int size = Command.values().length;
+        if (index + direction < 0) {
+            index = size - 1;
+        }
+        index = (index + direction) % (size - 1);
+        currentCommand = Command.values()[index];
+    }
+
+    private void drawTitleScreen() {
+        // BACKGROUND
+        g2d.setColor(new Color(50, 80, 70));
+        g2d.fillRect(0, 0, GamePanel.SCREEN_WIDTH, GamePanel.SCREEN_HEIGHT);
+        // TITLE
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 60F));
+        String text = "Blue Boy Adventure";
+        int x = getCenteredTextXCoordinate(text);
+        int y = GamePanel.TILE_SIZE * 3;
+        // Title shadow
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(text, x + 5, y + 5);
+        // Title text
+        g2d.setColor(Color.WHITE);
+        g2d.drawString(text, x, y);
+        // CHARACTER
+        x = GamePanel.SCREEN_WIDTH / 2 - GamePanel.TILE_SIZE;
+        y += GamePanel.TILE_SIZE * 2;
+        g2d.drawImage(gamePanel.getPlayer().getDown1(), x, y, GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE * 2, null);
+        // MENU
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 28F));
+
+        text = "NEW GAME";
+        x = getCenteredTextXCoordinate(text);
+        y += GamePanel.TILE_SIZE * 4;
+        g2d.drawString(text, x, y);
+        if (currentCommand == Command.NEW_GAME) {
+            g2d.drawString(">", x - GamePanel.TILE_SIZE, y);
+        }
+
+        text = "LOAD GAME";
+        x = getCenteredTextXCoordinate(text);
+        y += GamePanel.TILE_SIZE;
+        g2d.drawString(text, x, y);
+        if (currentCommand == Command.LOAD_GAME) {
+            g2d.drawString(">", x - GamePanel.TILE_SIZE, y);
+
+        }
+
+        text = "QUIT GAME";
+        x = getCenteredTextXCoordinate(text);
+        y += GamePanel.TILE_SIZE;
+        g2d.drawString(text, x, y);
+        if (currentCommand == Command.QUIT) {
+            g2d.drawString(">", x - GamePanel.TILE_SIZE, y);
+
         }
     }
 
@@ -102,5 +153,7 @@ public class UI {
 
     }
 
-
+    public enum Command {
+        NEW_GAME, LOAD_GAME, QUIT, NONE;
+    }
 }

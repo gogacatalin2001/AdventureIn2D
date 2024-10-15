@@ -34,8 +34,9 @@ public class OldManNPC extends Entity {
 
     void setDialogue() {
         dialogues.add("Hello, lad!");
-        dialogues.add("So you've come to this island for the treasure?");
-        dialogues.add("I used to be a great wizard, but now I'm a bit too old \nfor adventures like these...");
+        dialogues.add("So you've come to this island for \nthe treasure?");
+        dialogues.add("I used to be a great wizard, but now... \nI'm a bit too old for adventures \nlike these.");
+
         dialogues.add("Well, I wish you good luck!");
     }
 

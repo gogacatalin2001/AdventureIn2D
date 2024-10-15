@@ -54,17 +54,15 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void setupGame() {
-        gameState = GameState.PLAY;
+        gameState = GameState.TITLE_SCREEN;
         assetHandler.setObjects();
         assetHandler.setNPC();
-        playMusic(0);
     }
 
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
-
 
     @Override
     public void run() {
@@ -107,16 +105,20 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
-        // TILE
-        tileManager.draw(g2d);  // Background should be drawn before anything else
-        // OBJECT
-        assetHandler.drawObjects(g2d);
-        // NPCs
-        assetHandler.drawNPCs(g2d);
-        // PLAYER
-        player.draw(g2d);
-        // UI
-        ui.draw(g2d); // UI should be rendered over everything (last)
+        if (gameState == GameState.TITLE_SCREEN) {
+            ui.draw(g2d);
+        } else {
+            // TILE
+            tileManager.draw(g2d);  // Background should be drawn before anything else
+            // OBJECT
+            assetHandler.drawObjects(g2d);
+            // NPCs
+            assetHandler.drawNPCs(g2d);
+            // PLAYER
+            player.draw(g2d);
+            // UI
+            ui.draw(g2d); // UI should be rendered over everything (last)
+        }
 
         g2d.dispose();
     }
