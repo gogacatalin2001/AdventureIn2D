@@ -1,9 +1,9 @@
 package main;
 
+import entity.Entity;
 import lombok.Getter;
 import lombok.Setter;
-import object.HeartObj;
-import object.SuperObject;
+import entity.object.HeartObj;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -42,7 +42,7 @@ public class UI {
     }
 
     private void createHUDObject() {
-        SuperObject heart = new HeartObj();
+        Entity heart = new HeartObj(gamePanel);
         heartFull = heart.getImage(0);
         heartHalf = heart.getImage(1);
         heartBlank = heart.getImage(2);

@@ -10,36 +10,40 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @Getter
 public abstract class Entity {
-    final GamePanel gamePanel;
+    public static final int SPRITE_UPDATE_SPEED = 12;
+    protected final GamePanel gamePanel;
+    // ENTITY
+    protected String name;
     // SPRITE SETTINGS
-    @Setter
-    BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
-    public static final int spriteUpdateSpeed = 12;
-    int spriteCounter = 0;
-    int spriteNumber = 1;
+    protected List<BufferedImage> images = new ArrayList<>();
+    protected BufferedImage down1, down2, up1, up2, left1, left2, right1, right2;
+    protected int spriteCounter = 0;
+    protected int spriteNumber = 1;
     // MOVEMENT
-    int actionLockCounter = 0;
-    Rectangle collisionBox = new Rectangle(0, 0, 48, 48);
-    int collisionBoxDefaultX, collisionBoxDefaultY;
+    protected int actionLockCounter = 0;
+    protected Rectangle collisionBox = new Rectangle(0, 0, 48, 48);
+    protected int collisionBoxDefaultX, collisionBoxDefaultY;
     @Setter
-    boolean collisionDetected = false;
+    protected boolean collisionDetected = false;
     @Setter
-    int worldX, worldY; // Position of the entity in the world
+    protected boolean collisionEnabled = false;
     @Setter
-    int speed;
+    protected int worldX, worldY; // Position of the entity in the world
     @Setter
-    Direction direction;
+    protected int speed;
+    @Setter
+    protected Direction direction = Direction.DOWN;
     // NPC INTERACTIONS
-    List<String> dialogues = new ArrayList<>();
-    int dialogueIndex = 0;
+    protected List<String> dialogues = new ArrayList<>();
+    protected int dialogueIndex = 0;
 
-    public Entity(GamePanel gp) {
+    public Entity(GamePanel gp, String imageBasePath, List<String> imageNames) {
         this.gamePanel = gp;
+        loadImages(imageBasePath, imageNames);
     }
 
     public void update() {
@@ -52,18 +56,11 @@ public abstract class Entity {
         // CHECK PLAYER COLLISION
         gamePanel.getCollisionHandler().checkPlayerCollision(gamePanel.getPlayer(), this);
 
-        if (!collisionDetected) {
-            switch (direction) {
-                case UP -> worldY -= speed;
-                case DOWN -> worldY += speed;
-                case LEFT -> worldX -= speed;
-                case RIGHT -> worldX += speed;
-            }
-        }
+        move();
 
         // Change between sprites for character movement
         spriteCounter++;
-        if (spriteCounter > spriteUpdateSpeed) {
+        if (spriteCounter > SPRITE_UPDATE_SPEED) {
             if (spriteNumber == 1) {
                 spriteNumber = 2;
             } else {
@@ -84,7 +81,18 @@ public abstract class Entity {
         }
     }
 
-    void setAction() {
+    protected void move() {
+        if (!collisionDetected) {
+            switch (direction) {
+                case UP -> worldY -= speed;
+                case DOWN -> worldY += speed;
+                case LEFT -> worldX -= speed;
+                case RIGHT -> worldX += speed;
+            }
+        }
+    }
+
+    protected void setAction() {
 
     }
 
@@ -103,7 +111,30 @@ public abstract class Entity {
         }
     }
 
-    BufferedImage readImage(String basePath, String imageName) {
+    /**
+     * <p>
+     *     Sets loaded images for displaying the entity from all sides.
+     * <p>
+     *     If the entity has less than 8 images, then the method MUST
+     *     be overloaded and called in the constructor of the subclass
+     *     for proper display of the object.
+     */
+    protected void setSpriteImages() {
+        down1 = images.get(0);
+        down2 = images.get(1);
+        up1 = images.get(2);
+        up2 = images.get(3);
+        left1 = images.get(4);
+        left2 = images.get(5);
+        right1 = images.get(6);
+        right2 = images.get(7);
+    }
+
+    protected void loadImages(String basePath, List<String> imageNames) {
+        imageNames.forEach(imageName -> images.add(readImage(basePath, imageName)));
+    }
+
+    protected BufferedImage readImage(String basePath, String imageName) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(getClass().getResourceAsStream(basePath + imageName));
@@ -114,7 +145,8 @@ public abstract class Entity {
         return image;
     }
 
-    BufferedImage getSpriteImage() {
+
+    protected BufferedImage getSpriteImage() {
         BufferedImage image = null;
         switch (direction) {
             case UP -> {
@@ -151,6 +183,10 @@ public abstract class Entity {
             }
         }
         return image;
+    }
+
+    public BufferedImage getImage(int index) {
+        return images.get(index);
     }
 
 }

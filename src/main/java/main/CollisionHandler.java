@@ -1,7 +1,7 @@
 package main;
 
 import entity.Entity;
-import object.SuperObject;
+import entity.EntityHandler;
 import tile.TileManager;
 
 import java.util.List;
@@ -9,11 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CollisionHandler {
     private final TileManager tileManager;
-    private final AssetHandler assetHandler;
+    private final EntityHandler entityHandler;
 
-    public CollisionHandler(TileManager tm, AssetHandler ah) {
+    public CollisionHandler(TileManager tm, EntityHandler ah) {
         this.tileManager = tm;
-        this.assetHandler = ah;
+        this.entityHandler = ah;
     }
 
     public void checkTileCollision(Entity entity) {
@@ -57,12 +57,12 @@ public class CollisionHandler {
 
     public int checkObjectCollision(Entity entity, boolean isPlayer) {
         AtomicInteger objectIndex = new AtomicInteger(-1);
-        List<SuperObject> objects = assetHandler.getObjects();
+        List<Entity> objects = entityHandler.getObjects();
         objects.forEach(object -> {
             // Get entity collisionEnabled box position
             entity.getCollisionBox().x += entity.getWorldX();
             entity.getCollisionBox().y += entity.getWorldY();
-            // Get object collisionEnabled box position
+            // Get entity.object collisionEnabled box position
             object.getCollisionBox().x += object.getWorldX();
             object.getCollisionBox().y += object.getWorldY();
             // Check the collisionEnabled
@@ -118,18 +118,18 @@ public class CollisionHandler {
             object.getCollisionBox().x = object.getCollisionBoxDefaultX();
             object.getCollisionBox().y = object.getCollisionBoxDefaultY();
         });
-        System.out.println(objectIndex.get());
+
         return objectIndex.get();
     }
 
     public int checkEntityCollision(Entity entity) {
         AtomicInteger entityIndex = new AtomicInteger(-1);
-        List<Entity> targetEntities = assetHandler.getNpcs();
+        List<Entity> targetEntities = entityHandler.getNpcs();
         targetEntities.forEach(target -> {
             // Get entity collisionEnabled box position
             entity.getCollisionBox().x += entity.getWorldX();
             entity.getCollisionBox().y += entity.getWorldY();
-            // Get object collisionEnabled box position
+            // Get entity.object collisionEnabled box position
             target.getCollisionBox().x += target.getWorldX();
             target.getCollisionBox().y += target.getWorldY();
             // Check the collisionEnabled
@@ -176,7 +176,7 @@ public class CollisionHandler {
         // Get entity collisionEnabled box position
         entity.getCollisionBox().x += entity.getWorldX();
         entity.getCollisionBox().y += entity.getWorldY();
-        // Get object collisionEnabled box position
+        // Get entity.object collisionEnabled box position
         player.getCollisionBox().x += player.getWorldX();
         player.getCollisionBox().y += player.getWorldY();
         // Check the collisionEnabled

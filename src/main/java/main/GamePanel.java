@@ -1,6 +1,7 @@
 package main;
 
 import entity.Entity;
+import entity.EntityHandler;
 import entity.Player;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,9 +31,9 @@ public class GamePanel extends JPanel implements Runnable {
     private final TileManager tileManager = new TileManager(this);
     @Getter
     private final EventHandler eventHandler = new EventHandler(this);
-    private final AssetHandler assetHandler = new AssetHandler(this);
+    private final EntityHandler entityHandler = new EntityHandler(this);
     @Getter
-    private final CollisionHandler collisionHandler = new CollisionHandler(tileManager, assetHandler);
+    private final CollisionHandler collisionHandler = new CollisionHandler(tileManager, entityHandler);
     private final SoundHandler musicHandler = new SoundHandler();
     private final SoundHandler soundEffectHandler = new SoundHandler();
     @Getter
@@ -42,7 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Thread gameThread;
     // ENTITIES
     @Getter
-    private final Player player = new Player(this, keyHandler, assetHandler);
+    private final Player player = new Player(this, keyHandler, entityHandler);
     // GAME STATE
     @Getter
     @Setter
@@ -59,8 +60,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         gameState = GameState.TITLE_SCREEN;
-        assetHandler.setObjects();
-        assetHandler.setNPC();
+        entityHandler.setObject();
+        entityHandler.setNPC();
     }
 
     public void startGameThread() {
@@ -97,7 +98,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         if (gameState == GameState.PLAY) {
             player.update();
-            assetHandler.getNpcs().forEach(Entity::update);
+            entityHandler.getNpcs().forEach(Entity::update);
         } else if (gameState == GameState.PAUSE) {
             // do nothing
         }
@@ -115,9 +116,9 @@ public class GamePanel extends JPanel implements Runnable {
             // TILE
             tileManager.draw(g2d);  // Background should be drawn before anything else
             // OBJECT
-            assetHandler.drawObjects(g2d);
+            entityHandler.drawObjects(g2d);
             // NPCs
-            assetHandler.drawNPCs(g2d);
+            entityHandler.drawNPCs(g2d);
             // PLAYER
             player.draw(g2d);
             // UI
