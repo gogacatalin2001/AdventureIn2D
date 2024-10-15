@@ -4,11 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class UI {
     private final GamePanel gamePanel;
     private Graphics2D g2d;
-    private final Font ARIAL_40, ARIAL_80_B;
+    private Font PRUISA_B;
     private boolean displayMessage = false;
     private String message = "";
     private int messageDisplayCounter = 0;
@@ -21,9 +24,19 @@ public class UI {
 
     public UI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        ARIAL_40 = new Font("Aerial", Font.PLAIN, 40);
-        ARIAL_80_B = new Font("Aerial", Font.BOLD, 80);
+        loadFont();
     }
+
+    private void loadFont() {
+        try (InputStream inputStream = getClass().getResourceAsStream("/fonts/Purisa Bold.ttf")) {
+            PRUISA_B = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void showMessage(String text) {
         message = text;
@@ -37,24 +50,19 @@ public class UI {
 
     public void draw(Graphics2D g2d) {
         this.g2d = g2d;
-        g2d.setFont(ARIAL_40);
+        g2d.setFont(PRUISA_B);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setColor(Color.WHITE);
 
         switch (gamePanel.getGameState()) {
-            case PLAY -> {
-
-            }
-            case PAUSE -> {
-                drawPauseScreen();
-            }
-            case DIALOG -> {
-                drawDialogueScreen();
-            }
+            case PLAY -> {}
+            case PAUSE -> drawPauseScreen();
+            case DIALOG -> drawDialogueScreen();
         }
     }
 
     private void drawPauseScreen() {
-        g2d.setFont(g2d.getFont().deriveFont(Font.PLAIN, 80));
+        g2d.setFont(g2d.getFont().deriveFont(Font.PLAIN, 30F));
         String text = "PAUSED";
         int x, y;
 
