@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.function.Predicate;
 
 @Getter
 @Setter
@@ -45,7 +44,7 @@ public class KeyHandler implements KeyListener {
                     case KeyEvent.VK_ESCAPE -> gamePanel.setGameState(GameState.PLAY);
                 }
             }
-            case DIALOG -> {
+            case DIALOGUE -> {
                 switch (code) {
                     case KeyEvent.VK_ENTER -> gamePanel.setGameState(GameState.PLAY);
                 }

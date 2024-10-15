@@ -23,6 +23,7 @@ public class Player extends Entity {
     private boolean collision = false;
     // CHARACTER STATUS
     @Getter
+    @Setter
     int life;
     public final int maxLife = 6;
 
@@ -89,6 +90,11 @@ public class Player extends Entity {
             // CHECK NPC COLLISION
             int npcIndex = gamePanel.getCollisionHandler().checkEntityCollision(this);
             interactNPC(npcIndex);
+            // CHECK EVENT
+            gamePanel.getEventHandler().checkEvent();
+
+            keyHandler.setEnterPressed(false);
+
             
             if (!collisionDetected) {
                 switch (direction) {
@@ -115,10 +121,9 @@ public class Player extends Entity {
     private void interactNPC(int npcIndex) {
         if (npcIndex >= 0) {
             if (keyHandler.isEnterPressed()) {
-                gamePanel.setGameState(GameState.DIALOG);
+                gamePanel.setGameState(GameState.DIALOGUE);
                 assetHandler.getNPC(npcIndex).speak();
             }
-            keyHandler.setEnterPressed(false);
         }
     }
 

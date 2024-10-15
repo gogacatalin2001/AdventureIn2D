@@ -63,7 +63,7 @@ public class UI {
             case TITLE_SCREEN -> drawTitleScreen();
             case PLAY -> drawPlayerLife();
             case PAUSE -> drawPauseScreen();
-            case DIALOG -> drawDialogueScreen();
+            case DIALOGUE -> drawDialogueScreen();
         }
     }
 

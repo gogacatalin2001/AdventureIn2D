@@ -24,8 +24,11 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int MAX_WORLD_COL = 50;
     public static final int MAX_WORLD_ROW = 50;
     // GAME SYSTEM
+    @Getter
     private final KeyHandler keyHandler = new KeyHandler(this);
     private final TileManager tileManager = new TileManager(this);
+    @Getter
+    private final EventHandler eventHandler = new EventHandler(this);
     private final AssetHandler assetHandler = new AssetHandler(this);
     @Getter
     private final CollisionHandler collisionHandler = new CollisionHandler(tileManager, assetHandler);
