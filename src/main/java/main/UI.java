@@ -2,8 +2,11 @@ package main;
 
 import lombok.Getter;
 import lombok.Setter;
+import object.HeartObj;
+import object.SuperObject;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,11 +21,14 @@ public class UI {
     @Setter
     private boolean gameFinished = false;
     @Getter
-    private Command currentCommand = Command.NONE;
+    private Command currentCommand = Command.NEW_GAME;
+    @Getter
+    private BufferedImage heartFull, heartHalf, heartBlank;
 
     public UI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         loadFont();
+        createHUDObject();
     }
 
     private void loadFont() {
@@ -33,6 +39,13 @@ public class UI {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void createHUDObject() {
+        SuperObject heart = new HeartObj();
+        heartFull = heart.getImage(0);
+        heartHalf = heart.getImage(1);
+        heartBlank = heart.getImage(2);
     }
 
     public int getCenteredTextXCoordinate(String text) {
@@ -48,9 +61,30 @@ public class UI {
 
         switch (gamePanel.getGameState()) {
             case TITLE_SCREEN -> drawTitleScreen();
+            case PLAY -> drawPlayerLife();
             case PAUSE -> drawPauseScreen();
             case DIALOG -> drawDialogueScreen();
         }
+    }
+
+    private void drawPlayerLife() {
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < gamePanel.getPlayer().maxLife / 2; i++) {
+            g2d.drawImage(heartBlank, x, y, null);
+            x += GamePanel.TILE_SIZE;
+        }
+        x = 0;
+        y = 0;
+        for (int i = 0; i < gamePanel.getPlayer().getLife(); i++) {
+            g2d.drawImage(heartHalf, x, y, null);
+            i++;
+            if (i < gamePanel.getPlayer().getLife()) {
+                g2d.drawImage(heartFull, x, y, null);
+            }
+            x += GamePanel.TILE_SIZE;
+        }
+
     }
 
     public void changeCommand(int direction) {
@@ -154,6 +188,6 @@ public class UI {
     }
 
     public enum Command {
-        NEW_GAME, LOAD_GAME, QUIT, NONE;
+        NEW_GAME, LOAD_GAME, QUIT, NONE
     }
 }

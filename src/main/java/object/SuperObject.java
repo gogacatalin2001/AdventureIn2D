@@ -9,10 +9,13 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public abstract class SuperObject {
-    BufferedImage image;
+    List<BufferedImage> images = new ArrayList<>();
+    BufferedImage displayImage;
     String name;
     @Setter
     boolean collisionEnabled = false;
@@ -22,13 +25,16 @@ public abstract class SuperObject {
     int collisionBoxDefaultX = 0;
     int collisionBoxDefaultY = 0;
 
-    public SuperObject(String imageName, String objectName) {
-        try {
-            BufferedImage img = ImageIO.read(getClass().getResourceAsStream("/objects/" + imageName));
-            this.image = ImageScalingUtil.scaleImage(img, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public SuperObject(List<String> imageNames, String objectName) {
+        imageNames.forEach(imageName -> {
+            try {
+                BufferedImage img = ImageIO.read(getClass().getResourceAsStream("/objects/" + imageName));
+                images.add(ImageScalingUtil.scaleImage(img, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        this.displayImage = images.get(0);
         this.name = objectName;
     }
 
@@ -37,7 +43,15 @@ public abstract class SuperObject {
         int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
 
         if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
-            g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
+            g2d.drawImage(displayImage, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
         }
+    }
+
+    public void setDisplayImage(int index) {
+        displayImage = images.get(index);
+    }
+
+    public BufferedImage getImage(int index) {
+        return images.get(index);
     }
 }

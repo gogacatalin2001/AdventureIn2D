@@ -10,9 +10,8 @@ import java.awt.image.BufferedImage;
 public class Player extends Entity {
     private final GamePanel gamePanel;
     private final KeyHandler keyHandler;
-
     private final AssetHandler assetHandler;
-    // Position of the screen center
+    // MOVEMENT
     @Getter
     @Setter
     private int screenX;
@@ -22,6 +21,10 @@ public class Player extends Entity {
     @Getter
     @Setter
     private boolean collision = false;
+    // CHARACTER STATUS
+    @Getter
+    int life;
+    public final int maxLife = 6;
 
     public Player(GamePanel gp, KeyHandler kh, AssetHandler ah) {
         super(gp);
@@ -47,6 +50,7 @@ public class Player extends Entity {
         worldY = GamePanel.TILE_SIZE * 21;
         speed = 4;
         direction = Direction.DOWN;
+        life = maxLife;
     }
 
     private void getPlayerImage() {

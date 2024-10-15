@@ -1,8 +1,10 @@
 package object;
 
+import java.util.List;
+
 public class ChestObj extends SuperObject {
 
     public ChestObj() {
-        super("chest.png", "Chest");
+        super(List.of("chest.png"), "Chest");
     }
 }
