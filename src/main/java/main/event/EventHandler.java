@@ -94,7 +94,7 @@ public class EventHandler {
         if (gamePanel.getKeyHandler().isEnterPressed() && !eventCollisionBox[col][row].eventTriggered) {
             gamePanel.setGameState(gameState);
             gamePanel.getUi().setCurrentDialogue("You drank water. Your life has been \nrestored!");
-            gamePanel.getPlayer().setLife(gamePanel.getPlayer().maxLife);
+            gamePanel.getPlayer().setLife(gamePanel.getPlayer().getMaxLife());
         }
         gamePanel.getKeyHandler().setEnterPressed(false);
     }

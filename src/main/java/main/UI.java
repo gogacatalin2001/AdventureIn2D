@@ -70,7 +70,7 @@ public class UI {
     private void drawPlayerLife() {
         int x = 0;
         int y = 0;
-        for (int i = 0; i < gamePanel.getPlayer().maxLife / 2; i++) {
+        for (int i = 0; i < gamePanel.getPlayer().getMaxLife() / 2; i++) {
             g2d.drawImage(heartBlank, x, y, null);
             x += GamePanel.TILE_SIZE;
         }

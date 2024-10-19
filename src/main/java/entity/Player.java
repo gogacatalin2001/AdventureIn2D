@@ -22,11 +22,6 @@ public class Player extends Entity {
     @Getter
     @Setter
     private boolean collision = false;
-    // CHARACTER STATUS
-    @Getter
-    @Setter
-    int life;
-    public final int maxLife = 6;
 
     public Player(GamePanel gp, KeyHandler kh, EntityHandler ah) {
         super(gp, "/entities/blue_boy/Walking/",
@@ -57,8 +52,11 @@ public class Player extends Entity {
 
     public void setDefaultValues() {
         // Player starting position in world coordinates
-        worldX = GamePanel.TILE_SIZE * 23;
-        worldY = GamePanel.TILE_SIZE * 21;
+//        worldX = GamePanel.TILE_SIZE * 23;
+//        worldY = GamePanel.TILE_SIZE * 21;
+
+        worldX = GamePanel.TILE_SIZE * 10;
+        worldY = GamePanel.TILE_SIZE * 13;
         speed = 4;
         direction = Direction.DOWN;
         life = maxLife;
@@ -84,20 +82,26 @@ public class Player extends Entity {
                 direction = Direction.RIGHT;
             }
 
-            // CHECK TILE COLLISION
+            // COLLISION
+            // tiles
             collisionDetected = false;
             gamePanel.getCollisionHandler().checkTileCollision(this);
-            // CHECK OBJECT COLLISION
-            int collisionObjectIndex = gamePanel.getCollisionHandler().checkObjectCollision(this, true);
+            // objects
+            int collisionObjectIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getObjects());
             reactToObject(collisionObjectIndex);
-            // CHECK NPC COLLISION
-            int npcIndex = gamePanel.getCollisionHandler().checkEntityCollision(this);
+            // NPCs
+            int npcIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getNpcs());
+            System.out.println("NPC: " + npcIndex);
             interactNPC(npcIndex);
+            // monsters
+            int monsterIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getMonsters());
+            System.out.println("MON: " + monsterIndex);
+            touchMonster(monsterIndex);
+
             // CHECK EVENT
             gamePanel.getEventHandler().checkEvent();
 
             keyHandler.setEnterPressed(false);
-
             super.move();
 
             // Change between sprites for character movement
@@ -109,6 +113,23 @@ public class Player extends Entity {
                     spriteNumber = 1;
                 }
                 spriteCounter = 0;
+            }
+        }
+        // Needs to increment always
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 60) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
+    }
+
+    private void touchMonster(int monsterIndex) {
+        if (monsterIndex >= 0) {
+            if (!invincible) {
+                life--;
+                invincible = true;
             }
         }
     }
