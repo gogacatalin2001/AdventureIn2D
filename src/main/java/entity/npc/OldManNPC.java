@@ -21,9 +21,10 @@ public class OldManNPC extends Entity {
                         "oldman_right_1.png",
                         "oldman_right_2.png")
         );
+        speed = 1;
+        name = "Old Man";
         setSpriteImages();
         setDialogue();
-        speed = 1;
     }
 
     @Override

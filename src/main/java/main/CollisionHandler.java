@@ -1,22 +1,16 @@
 package main;
 
 import entity.Entity;
-import entity.EntityHandler;
 import tile.TileManager;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CollisionHandler {
-    private final TileManager tileManager;
-    private final EntityHandler entityHandler;
+public abstract class CollisionHandler {
 
-    public CollisionHandler(TileManager tm, EntityHandler ah) {
-        this.tileManager = tm;
-        this.entityHandler = ah;
-    }
+    private CollisionHandler() {}
 
-    public void checkTileCollision(Entity entity) {
+    public static void checkTileCollision(final Entity entity, final TileManager tileManager) {
         int entityLeftCollisionX = entity.getWorldX() + entity.getCollisionBox().x;
         int entityRightCollisionX = entity.getWorldX() + entity.getCollisionBox().x + entity.getCollisionBox().width;
         int entityTopCollisionY = entity.getWorldY() + entity.getCollisionBox().y;
@@ -55,161 +49,43 @@ public class CollisionHandler {
         entity.setCollisionDetected(tileManager.getTile(tileNum1).isCollisionEnabled() || tileManager.getTile(tileNum2).isCollisionEnabled());
     }
 
-    public int checkObjectCollision(Entity entity, boolean isPlayer) {
-        AtomicInteger objectIndex = new AtomicInteger(-1);
-        List<Entity> objects = entityHandler.getObjects();
-        objects.forEach(object -> {
-            // Get entity collisionEnabled box position
-            entity.getCollisionBox().x += entity.getWorldX();
-            entity.getCollisionBox().y += entity.getWorldY();
-            // Get entity.object collisionEnabled box position
-            object.getCollisionBox().x += object.getWorldX();
-            object.getCollisionBox().y += object.getWorldY();
-            // Check the collisionEnabled
-            switch (entity.getDirection()) {
-                case UP -> {
-                    entity.getCollisionBox().y -= entity.getSpeed();
-                    if (entity.getCollisionBox().intersects(object.getCollisionBox())) {
-                        if (object.isCollisionEnabled()) {
-                            entity.setCollisionDetected(true);
-                        }
-                        if (isPlayer) {
-                            objectIndex.set(objects.indexOf(object));
-                        }
-                    }
-                }
-                case DOWN -> {
-                    entity.getCollisionBox().y += entity.getSpeed();
-                    if (entity.getCollisionBox().intersects(object.getCollisionBox())) {
-                        if (object.isCollisionEnabled()) {
-                            entity.setCollisionDetected(true);
-                        }
-                        if (isPlayer) {
-                            objectIndex.set(objects.indexOf(object));
-                        }
-                    }
-                }
-                case LEFT -> {
-                    entity.getCollisionBox().x -= entity.getSpeed();
-                    if (entity.getCollisionBox().intersects(object.getCollisionBox())) {
-                        if (object.isCollisionEnabled()) {
-                            entity.setCollisionDetected(true);
-                        }
-                        if (isPlayer) {
-                            objectIndex.set(objects.indexOf(object));
-                        }
-                    }
-                }
-                case RIGHT -> {
-                    entity.getCollisionBox().x += entity.getSpeed();
-                    if (entity.getCollisionBox().intersects(object.getCollisionBox())) {
-                        if (object.isCollisionEnabled()) {
-                            entity.setCollisionDetected(true);
-                        }
-                        if (isPlayer) {
-                            objectIndex.set(objects.indexOf(object));
-                        }
-                    }
-                }
-            }
-            // Reset collisionEnabled box coordinates after collisionEnabled check for each direction
-            entity.getCollisionBox().x = entity.getCollisionBoxDefaultX();
-            entity.getCollisionBox().y = entity.getCollisionBoxDefaultY();
-            object.getCollisionBox().x = object.getCollisionBoxDefaultX();
-            object.getCollisionBox().y = object.getCollisionBoxDefaultY();
-        });
-
-        return objectIndex.get();
-    }
-
-    public int checkEntityCollision(Entity entity) {
-        AtomicInteger entityIndex = new AtomicInteger(-1);
-        List<Entity> targetEntities = entityHandler.getNpcs();
+    public static int checkEntityCollision(final Entity entity, final List<Entity> targetEntities) {
+        AtomicInteger targetIndex = new AtomicInteger(-1);
         targetEntities.forEach(target -> {
-            // Get entity collisionEnabled box position
-            entity.getCollisionBox().x += entity.getWorldX();
-            entity.getCollisionBox().y += entity.getWorldY();
-            // Get entity.object collisionEnabled box position
-            target.getCollisionBox().x += target.getWorldX();
-            target.getCollisionBox().y += target.getWorldY();
-            // Check the collisionEnabled
-            switch (entity.getDirection()) {
-                case UP -> {
-                    entity.getCollisionBox().y -= entity.getSpeed();
-                    if (entity.getCollisionBox().intersects(target.getCollisionBox())) {
-                        entity.setCollisionDetected(true);
-                        entityIndex.set(targetEntities.indexOf(target));
-                    }
-                }
-                case DOWN -> {
-                    entity.getCollisionBox().y += entity.getSpeed();
-                    if (entity.getCollisionBox().intersects(target.getCollisionBox())) {
-                        entity.setCollisionDetected(true);
-                        entityIndex.set(targetEntities.indexOf(target));
-                    }
-                }
-                case LEFT -> {
-                    entity.getCollisionBox().x -= entity.getSpeed();
-                    if (entity.getCollisionBox().intersects(target.getCollisionBox())) {
-                        entity.setCollisionDetected(true);
-                        entityIndex.set(targetEntities.indexOf(target));
-                    }
-                }
-                case RIGHT -> {
-                    entity.getCollisionBox().x += entity.getSpeed();
-                    if (entity.getCollisionBox().intersects(target.getCollisionBox())) {
-                        entity.setCollisionDetected(true);
-                        entityIndex.set(targetEntities.indexOf(target));
-                    }
-                }
+            boolean collisionDetected = checkCollision(entity, target);
+            entity.setCollisionDetected(entity.isCollisionDetected() || collisionDetected);
+            if (collisionDetected) {
+                targetIndex.set(targetEntities.indexOf(target));
             }
-            // Reset collisionEnabled box coordinates after collisionEnabled check for each direction
-            entity.getCollisionBox().x = entity.getCollisionBoxDefaultX();
-            entity.getCollisionBox().y = entity.getCollisionBoxDefaultY();
-            target.getCollisionBox().x = target.getCollisionBoxDefaultX();
-            target.getCollisionBox().y = target.getCollisionBoxDefaultY();
         });
-        return entityIndex.get();
+        return targetIndex.get();
     }
 
-    public void checkPlayerCollision(Entity player, Entity entity) {
+    public static boolean checkCollision(final Entity entity, final Entity target) {
+        boolean collisionDetected = false;
         // Get entity collisionEnabled box position
+        target.getCollisionBox().x += target.getWorldX();
+        target.getCollisionBox().y += target.getWorldY();
+        // Get entity.object collisionEnabled box position
         entity.getCollisionBox().x += entity.getWorldX();
         entity.getCollisionBox().y += entity.getWorldY();
-        // Get entity.object collisionEnabled box position
-        player.getCollisionBox().x += player.getWorldX();
-        player.getCollisionBox().y += player.getWorldY();
         // Check the collisionEnabled
         switch (entity.getDirection()) {
-            case UP -> {
-                entity.getCollisionBox().y -= entity.getSpeed();
-                if (entity.getCollisionBox().intersects(player.getCollisionBox())) {
-                    entity.setCollisionDetected(true);
-                }
-            }
-            case DOWN -> {
-                entity.getCollisionBox().y += entity.getSpeed();
-                if (entity.getCollisionBox().intersects(player.getCollisionBox())) {
-                    entity.setCollisionDetected(true);
-                }
-            }
-            case LEFT -> {
-                entity.getCollisionBox().x -= entity.getSpeed();
-                if (entity.getCollisionBox().intersects(player.getCollisionBox())) {
-                    entity.setCollisionDetected(true);
-                }
-            }
-            case RIGHT -> {
-                entity.getCollisionBox().x += entity.getSpeed();
-                if (entity.getCollisionBox().intersects(player.getCollisionBox())) {
-                    entity.setCollisionDetected(true);
-                }
-            }
+            case UP -> entity.getCollisionBox().y -= entity.getSpeed();
+            case DOWN -> entity.getCollisionBox().y += entity.getSpeed();
+            case LEFT -> entity.getCollisionBox().x -= entity.getSpeed();
+            case RIGHT -> entity.getCollisionBox().x += entity.getSpeed();
+        }
+        if (entity.getCollisionBox().intersects(target.getCollisionBox()) && !entity.equals(target)) {
+            collisionDetected = true;
         }
         // Reset collisionEnabled box coordinates after collisionEnabled check for each direction
+        target.getCollisionBox().x = target.getCollisionBoxDefaultX();
+        target.getCollisionBox().y = target.getCollisionBoxDefaultY();
         entity.getCollisionBox().x = entity.getCollisionBoxDefaultX();
         entity.getCollisionBox().y = entity.getCollisionBoxDefaultY();
-        player.getCollisionBox().x = player.getCollisionBoxDefaultX();
-        player.getCollisionBox().y = player.getCollisionBoxDefaultY();
+
+        return collisionDetected;
     }
+
 }

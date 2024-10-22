@@ -28,12 +28,12 @@ public class GamePanel extends JPanel implements Runnable {
     // GAME SYSTEM
     @Getter
     private final KeyHandler keyHandler = new KeyHandler(this);
+    @Getter
     private final TileManager tileManager = new TileManager(this);
     @Getter
     private final EventHandler eventHandler = new EventHandler(this);
-    private final EntityHandler entityHandler = new EntityHandler(this);
     @Getter
-    private final CollisionHandler collisionHandler = new CollisionHandler(tileManager, entityHandler);
+    private final EntityHandler entityHandler = new EntityHandler(this);
     private final SoundHandler musicHandler = new SoundHandler();
     private final SoundHandler soundEffectHandler = new SoundHandler();
     @Getter
@@ -62,6 +62,7 @@ public class GamePanel extends JPanel implements Runnable {
         gameState = GameState.TITLE_SCREEN;
         entityHandler.setObject();
         entityHandler.setNPC();
+        entityHandler.setMonsters();
     }
 
     public void startGameThread() {
@@ -99,6 +100,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == GameState.PLAY) {
             player.update();
             entityHandler.getNpcs().forEach(Entity::update);
+            entityHandler.getMonsters().forEach(Entity::update);
         } else if (gameState == GameState.PAUSE) {
             // do nothing
         }
@@ -119,6 +121,8 @@ public class GamePanel extends JPanel implements Runnable {
             entityHandler.drawObjects(g2d);
             // NPCs
             entityHandler.drawNPCs(g2d);
+            // MONSTERS
+            entityHandler.drawMonsters(g2d);
             // PLAYER
             player.draw(g2d);
             // UI

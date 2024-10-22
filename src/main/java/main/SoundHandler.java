@@ -17,7 +17,7 @@ public class SoundHandler {
         soundURL[4] = getClass().getResource("/sounds/fanfare.wav");
     }
 
-    public void setFile(int index) {
+    public void setFile(final int index) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundURL[index]);
             clip = AudioSystem.getClip();

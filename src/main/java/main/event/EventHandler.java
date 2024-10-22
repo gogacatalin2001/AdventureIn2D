@@ -22,6 +22,7 @@ public class EventHandler {
         int xDistance = Math.abs(gamePanel.getPlayer().getWorldX() - previousEventX);
         int yDistance = Math.abs(gamePanel.getPlayer().getWorldY() - previousEventY);
         int distance = Math.max(xDistance, yDistance);
+
         if (distance > GamePanel.TILE_SIZE) {
             canTouchEvent = true;
         }
@@ -39,6 +40,7 @@ public class EventHandler {
     private void setEventCollisionBox() {
         int col = 0;
         int row = 0;
+
         while (col < GamePanel.MAX_WORLD_COL && row < GamePanel.MAX_WORLD_ROW) {
             eventCollisionBox[col][row] = new EventCollisionBox();
             eventCollisionBox[col][row].x = 23;
@@ -56,7 +58,7 @@ public class EventHandler {
         }
     }
 
-    public boolean generateEvent(int eventCol, int eventRow, Direction requiredDirection) {
+    public boolean generateEvent(final int eventCol, final int eventRow, final Direction requiredDirection) {
         boolean detectedPlayer = false;
 
         gamePanel.getPlayer().getCollisionBox().x = gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getCollisionBox().x;
@@ -81,7 +83,7 @@ public class EventHandler {
         return detectedPlayer;
     }
 
-    private void damagePitEvent(int col, int row, GameState gameState) {
+    private void damagePitEvent(final int col, final int row, final GameState gameState) {
         if (!eventCollisionBox[col][row].eventTriggered) {
             gamePanel.setGameState(gameState);
             gamePanel.getUi().setCurrentDialogue("You fell into a pit!");
@@ -90,11 +92,11 @@ public class EventHandler {
         }
     }
 
-    private void healingPool(int col, int row, GameState gameState) {
+    private void healingPool(final int col, final int row, final GameState gameState) {
         if (gamePanel.getKeyHandler().isEnterPressed() && !eventCollisionBox[col][row].eventTriggered) {
             gamePanel.setGameState(gameState);
             gamePanel.getUi().setCurrentDialogue("You drank water. Your life has been \nrestored!");
-            gamePanel.getPlayer().setLife(gamePanel.getPlayer().maxLife);
+            gamePanel.getPlayer().setLife(gamePanel.getPlayer().getMaxLife());
         }
         gamePanel.getKeyHandler().setEnterPressed(false);
     }

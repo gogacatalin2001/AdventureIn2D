@@ -2,6 +2,7 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.CollisionHandler;
 import main.GamePanel;
 import util.ImageScalingUtil;
 
@@ -18,6 +19,13 @@ public abstract class Entity {
     protected final GamePanel gamePanel;
     // ENTITY
     protected String name;
+    @Setter
+    protected int life;
+    protected int maxLife = 6;
+    @Setter
+    protected boolean invincible = false;
+    @Setter
+    protected int invincibleCounter = 0;
     // SPRITE SETTINGS
     protected List<BufferedImage> images = new ArrayList<>();
     protected BufferedImage down1, down2, up1, up2, left1, left2, right1, right2;
@@ -48,13 +56,19 @@ public abstract class Entity {
 
     public void update() {
         setAction();
-        // CHECK TILE COLLISION
+
+        // CHECK COLLISION
+        // tile
         collisionDetected = false;
-        gamePanel.getCollisionHandler().checkTileCollision(this);
-        // CHECK OBJECT COLLISION
-        gamePanel.getCollisionHandler().checkObjectCollision(this, false);
-        // CHECK PLAYER COLLISION
-        gamePanel.getCollisionHandler().checkPlayerCollision(gamePanel.getPlayer(), this);
+        CollisionHandler.checkTileCollision(this, gamePanel.getTileManager());
+        // object
+        CollisionHandler.checkEntityCollision(this, gamePanel.getEntityHandler().getObjects());
+        // player
+        CollisionHandler.checkEntityCollision(this, List.of(gamePanel.getPlayer()));
+        // npc
+        CollisionHandler.checkEntityCollision(this, gamePanel.getEntityHandler().getNpcs());
+        // monster
+        CollisionHandler.checkEntityCollision(this, gamePanel.getEntityHandler().getMonsters());
 
         move();
 

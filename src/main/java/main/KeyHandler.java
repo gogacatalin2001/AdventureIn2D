@@ -21,12 +21,12 @@ public class KeyHandler implements KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(final KeyEvent e) {
         // not used
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(final KeyEvent e) {
         int code = e.getKeyCode();
         switch (gamePanel.getGameState()) {
             case PLAY -> {
@@ -72,7 +72,7 @@ public class KeyHandler implements KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(final KeyEvent e) {
         int code = e.getKeyCode();
 
         switch (code) {
