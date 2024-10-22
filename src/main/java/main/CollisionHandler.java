@@ -6,14 +6,11 @@ import tile.TileManager;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CollisionHandler {
-    private final TileManager tileManager;
+public abstract class CollisionHandler {
 
-    public CollisionHandler(TileManager tm) {
-        this.tileManager = tm;
-    }
+    private CollisionHandler() {}
 
-    public void checkTileCollision(Entity entity) {
+    public static void checkTileCollision(final Entity entity, final TileManager tileManager) {
         int entityLeftCollisionX = entity.getWorldX() + entity.getCollisionBox().x;
         int entityRightCollisionX = entity.getWorldX() + entity.getCollisionBox().x + entity.getCollisionBox().width;
         int entityTopCollisionY = entity.getWorldY() + entity.getCollisionBox().y;
@@ -52,18 +49,20 @@ public class CollisionHandler {
         entity.setCollisionDetected(tileManager.getTile(tileNum1).isCollisionEnabled() || tileManager.getTile(tileNum2).isCollisionEnabled());
     }
 
-    public static int checkEntityCollision(Entity entity, List<Entity> targetEntities) {
+    public static int checkEntityCollision(final Entity entity, final List<Entity> targetEntities) {
         AtomicInteger targetIndex = new AtomicInteger(-1);
         targetEntities.forEach(target -> {
-            checkCollision(entity, target);
-            if (entity.isCollisionDetected()) {
+            boolean collisionDetected = checkCollision(entity, target);
+            entity.setCollisionDetected(entity.isCollisionDetected() || collisionDetected);
+            if (collisionDetected) {
                 targetIndex.set(targetEntities.indexOf(target));
             }
         });
         return targetIndex.get();
     }
 
-    public static void checkCollision(Entity entity, Entity target) {
+    public static boolean checkCollision(final Entity entity, final Entity target) {
+        boolean collisionDetected = false;
         // Get entity collisionEnabled box position
         target.getCollisionBox().x += target.getWorldX();
         target.getCollisionBox().y += target.getWorldY();
@@ -78,13 +77,15 @@ public class CollisionHandler {
             case RIGHT -> entity.getCollisionBox().x += entity.getSpeed();
         }
         if (entity.getCollisionBox().intersects(target.getCollisionBox()) && !entity.equals(target)) {
-            entity.setCollisionDetected(true);
+            collisionDetected = true;
         }
         // Reset collisionEnabled box coordinates after collisionEnabled check for each direction
         target.getCollisionBox().x = target.getCollisionBoxDefaultX();
         target.getCollisionBox().y = target.getCollisionBoxDefaultY();
         entity.getCollisionBox().x = entity.getCollisionBoxDefaultX();
         entity.getCollisionBox().y = entity.getCollisionBoxDefaultY();
+
+        return collisionDetected;
     }
 
 }

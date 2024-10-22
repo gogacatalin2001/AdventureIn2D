@@ -31,7 +31,7 @@ public class EntityHandler {
 
     }
 
-    public void drawObjects(Graphics2D g2d) {
+    public void drawObjects(final Graphics2D g2d) {
         objects.forEach(obj -> obj.draw(g2d));
     }
 
@@ -48,11 +48,11 @@ public class EntityHandler {
         npcs.add(oldMan);
     }
 
-    public Entity getNPC(int index) {
+    public Entity getNPC(final int index) {
         return npcs.get(index);
     }
 
-    public void drawNPCs(Graphics2D g2d) {
+    public void drawNPCs(final Graphics2D g2d) {
         npcs.forEach(npc-> npc.draw(g2d));
     }
 
@@ -78,7 +78,7 @@ public class EntityHandler {
         monsters.add(slime2);
     }
 
-    public void drawMonsters(Graphics2D g2d) {
+    public void drawMonsters(final Graphics2D g2d) {
         monsters.forEach(monster-> monster.draw(g2d));
     }
 }

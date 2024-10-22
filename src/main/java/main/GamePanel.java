@@ -28,13 +28,12 @@ public class GamePanel extends JPanel implements Runnable {
     // GAME SYSTEM
     @Getter
     private final KeyHandler keyHandler = new KeyHandler(this);
+    @Getter
     private final TileManager tileManager = new TileManager(this);
     @Getter
     private final EventHandler eventHandler = new EventHandler(this);
     @Getter
     private final EntityHandler entityHandler = new EntityHandler(this);
-    @Getter
-    private final CollisionHandler collisionHandler = new CollisionHandler(tileManager);
     private final SoundHandler musicHandler = new SoundHandler();
     private final SoundHandler soundEffectHandler = new SoundHandler();
     @Getter

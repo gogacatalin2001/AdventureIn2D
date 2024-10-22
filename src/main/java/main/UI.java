@@ -48,12 +48,12 @@ public class UI {
         heartBlank = heart.getImage(2);
     }
 
-    public int getCenteredTextXCoordinate(String text) {
+    public int getCenteredTextXCoordinate(final String text) {
         int textLength = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
         return GamePanel.SCREEN_WIDTH / 2 - textLength / 2;
     }
 
-    public void draw(Graphics2D g2d) {
+    public void draw(final Graphics2D g2d) {
         this.g2d = g2d;
         g2d.setFont(PRUISA_B);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -87,7 +87,7 @@ public class UI {
 
     }
 
-    public void changeCommand(int direction) {
+    public void changeCommand(final int direction) {
         int index = currentCommand.ordinal();
         int size = Command.values().length;
         if (index + direction < 0) {
@@ -175,7 +175,7 @@ public class UI {
         }
     }
 
-    private void drawWindow(int x, int y, int width, int height) {
+    private void drawWindow(final int x, final int y, final int width, final int height) {
         Color windowBackgroundColor = new Color(0, 0, 0, 200);
         g2d.setColor(windowBackgroundColor);
         g2d.fillRoundRect(x, y, width, height, 35, 35);

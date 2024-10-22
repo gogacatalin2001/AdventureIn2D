@@ -60,11 +60,11 @@ public abstract class Entity {
         // CHECK COLLISION
         // tile
         collisionDetected = false;
-        gamePanel.getCollisionHandler().checkTileCollision(this);
+        CollisionHandler.checkTileCollision(this, gamePanel.getTileManager());
         // object
         CollisionHandler.checkEntityCollision(this, gamePanel.getEntityHandler().getObjects());
         // player
-        CollisionHandler.checkCollision(this, gamePanel.getPlayer());
+        CollisionHandler.checkEntityCollision(this, List.of(gamePanel.getPlayer()));
         // npc
         CollisionHandler.checkEntityCollision(this, gamePanel.getEntityHandler().getNpcs());
         // monster

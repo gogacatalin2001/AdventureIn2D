@@ -67,8 +67,8 @@ public class Player extends Entity {
         super.setSpriteImages();
     }
 
+    @Override
     public void update() {
-        // Only render tiles within the screen boundary
         if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
                 keyHandler.isLeftPressed() || keyHandler.isRightPressed()) {
             // Handle character movement
@@ -85,7 +85,7 @@ public class Player extends Entity {
             // COLLISION
             // tiles
             collisionDetected = false;
-            gamePanel.getCollisionHandler().checkTileCollision(this);
+            CollisionHandler.checkTileCollision(this, gamePanel.getTileManager());
             // objects
             int collisionObjectIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getObjects());
             reactToObject(collisionObjectIndex);
@@ -126,7 +126,7 @@ public class Player extends Entity {
     }
 
     private void touchMonster(int monsterIndex) {
-        if (monsterIndex >= 0) {
+        if (monsterIndex >= 0 && collisionDetected) {
             if (!invincible) {
                 life--;
                 invincible = true;
@@ -150,8 +150,13 @@ public class Player extends Entity {
     }
 
     public void draw(Graphics2D g2d) {
+        if (invincible) {
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        }
         // Draw player image
         BufferedImage image = getSpriteImage();
         g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
+        // Reset alpha
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 }
