@@ -3,14 +3,18 @@ package entity.monster;
 import entity.Direction;
 import entity.Entity;
 import main.GamePanel;
+import util.ImageProperties;
 
-import java.util.List;
-import java.util.Random;
+import java.awt.image.BufferedImage;
+import java.util.*;
 
 public class GreenSlimeMonster extends Entity {
 
     public GreenSlimeMonster(GamePanel gp) {
-        super(gp, "/monsters/", List.of("greenslime_down_1.png", "greenslime_down_2.png"));
+        List<ImageProperties> imageMap = new ArrayList<>();
+        imageMap.add(new ImageProperties("greenslime_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageMap.add(new ImageProperties("greenslime_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        super(gp, "/monsters/", imageMap);
         name = "Green Slime";
         speed = 1;
         maxLife = 4;
@@ -21,21 +25,7 @@ public class GreenSlimeMonster extends Entity {
         collisionBox.height = 30;
         collisionBoxDefaultX = collisionBox.x;
         collisionBoxDefaultY = collisionBox.y;
-
-        setSpriteImages();
         setAction();
-    }
-
-    @Override
-    protected void setSpriteImages() {
-        down1 = images.get(0);
-        down2 = images.get(1);
-        up1 = images.get(0);
-        up2 = images.get(1);
-        left1 = images.get(0);
-        left2 = images.get(1);
-        right1 = images.get(0);
-        right2 = images.get(1);
     }
 
     @Override
@@ -55,5 +45,10 @@ public class GreenSlimeMonster extends Entity {
             }
             actionLockCounter = 0;
         }
+    }
+
+    @Override
+    protected BufferedImage getSpriteImage() {
+        return images.get(spriteNumber - 1);
     }
 }

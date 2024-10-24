@@ -2,27 +2,29 @@ package entity.object;
 
 import entity.Entity;
 import main.GamePanel;
+import util.ImageProperties;
 
-import java.util.List;
+import java.awt.image.BufferedImage;
+import java.util.*;
 
 public class DoorObj extends Entity {
 
     public DoorObj(GamePanel gp) {
-        super(gp, "/objects/", List.of("door.png"));
+        List<ImageProperties> imageProperties = new ArrayList<>();
+        imageProperties.add(new ImageProperties("door.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        super(gp, "/objects/", imageProperties);
         name = "Door";
         collisionEnabled = true;
-
         collisionBox.x = 0;
         collisionBox.y = 16;
         collisionBox.width = GamePanel.TILE_SIZE;
         collisionBox.height = 32;
         collisionBoxDefaultX = collisionBox.x;
         collisionBoxDefaultY = collisionBox.y;
-        setSpriteImages();
     }
 
     @Override
-    protected void setSpriteImages() {
-        down1 = images.get(0);
+    protected BufferedImage getSpriteImage() {
+        return images.getFirst();
     }
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import main.CollisionHandler;
 import main.GamePanel;
+import util.ImageProperties;
 import util.ImageScalingUtil;
 
 import javax.imageio.ImageIO;
@@ -17,7 +18,7 @@ import java.util.List;
 public abstract class Entity {
     public static final int SPRITE_UPDATE_SPEED = 12;
     protected final GamePanel gamePanel;
-    // ENTITY
+    // STATE
     protected String name;
     @Setter
     protected int life;
@@ -26,9 +27,12 @@ public abstract class Entity {
     protected boolean invincible = false;
     @Setter
     protected int invincibleCounter = 0;
+    @Setter
+    protected Action action = Action.WALK;
     // SPRITE SETTINGS
     protected List<BufferedImage> images = new ArrayList<>();
-    protected BufferedImage down1, down2, up1, up2, left1, left2, right1, right2;
+//    protected BufferedImage down1, down2, up1, up2, left1, left2, right1, right2;
+//    protected BufferedImage attackDown1, attackDown2, attackUp1, attackUp2, attackLeft1, attackLeft2, attackRight1, attackRight2;
     protected int spriteCounter = 0;
     protected int spriteNumber = 1;
     // MOVEMENT
@@ -49,9 +53,9 @@ public abstract class Entity {
     protected List<String> dialogues = new ArrayList<>();
     protected int dialogueIndex = 0;
 
-    public Entity(GamePanel gp, String imageBasePath, List<String> imageNames) {
+    public Entity(GamePanel gp, String imageBasePath, List<ImageProperties> imageProperties) {
         this.gamePanel = gp;
-        loadImages(imageBasePath, imageNames);
+        loadImages(imageBasePath, imageProperties);
     }
 
     public void update() {
@@ -125,82 +129,35 @@ public abstract class Entity {
         }
     }
 
-    /**
-     * <p>
-     *     Sets loaded images for displaying the entity from all sides.
-     * <p>
-     *     If the entity has less than 8 images, then the method MUST
-     *     be overloaded and called in the constructor of the subclass
-     *     for proper display of the object.
-     */
-    protected void setSpriteImages() {
-        down1 = images.get(0);
-        down2 = images.get(1);
-        up1 = images.get(2);
-        up2 = images.get(3);
-        left1 = images.get(4);
-        left2 = images.get(5);
-        right1 = images.get(6);
-        right2 = images.get(7);
+    protected void loadImages(String basePath, List<ImageProperties> imageProperties) {
+        imageProperties.forEach(properties -> {
+            BufferedImage image = readImage(basePath, properties.imageName(), properties.width(), properties.height());
+            if (image != null) {
+                images.add(image);
+            }
+        });
     }
 
-    protected void loadImages(String basePath, List<String> imageNames) {
-        imageNames.forEach(imageName -> images.add(readImage(basePath, imageName)));
-    }
-
-    protected BufferedImage readImage(String basePath, String imageName) {
+    protected BufferedImage readImage(String basePath, String imageName, Integer width, Integer height) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(getClass().getResourceAsStream(basePath + imageName));
-            image = ImageScalingUtil.scaleImage(image, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+            image = ImageScalingUtil.scaleImage(image, width, height);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to load image: " + basePath + " " + imageName);
         }
         return image;
     }
 
 
     protected BufferedImage getSpriteImage() {
-        BufferedImage image = null;
-        switch (direction) {
-            case UP -> {
-                if (spriteNumber == 1) {
-                    image = up1;
-                }
-                if (spriteNumber == 2) {
-                    image = up2;
-                }
-            }
-            case DOWN -> {
-                if (spriteNumber == 1) {
-                    image = down1;
-                }
-                if (spriteNumber == 2) {
-                    image = down2;
-                }
-            }
-            case LEFT -> {
-                if (spriteNumber == 1) {
-                    image = left1;
-                }
-                if (spriteNumber == 2) {
-                    image = left2;
-                }
-            }
-            case RIGHT -> {
-                if (spriteNumber == 1) {
-                    image = right1;
-                }
-                if (spriteNumber == 2) {
-                    image = right2;
-                }
-            }
+        int actionIndex = action.ordinal() * 8;
+        int directionIndex = direction.ordinal() * 2;
+
+        if (spriteNumber == 1) {
+            return images.get(actionIndex + directionIndex);
+        } else {
+            return images.get(actionIndex + directionIndex + 1);
         }
-        return image;
     }
-
-    public BufferedImage getImage(int index) {
-        return images.get(index);
-    }
-
 }

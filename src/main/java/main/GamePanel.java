@@ -10,6 +10,7 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
     // TODO: maybe add achievements (finish one level before the theme song finishes playing once??)
@@ -54,6 +55,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
+        this.addMouseListener(keyHandler);
         this.setFocusable(true);
         setupGame();
     }

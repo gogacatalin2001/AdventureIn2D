@@ -3,27 +3,25 @@ package entity.npc;
 import entity.Direction;
 import entity.Entity;
 import main.GamePanel;
+import util.ImageProperties;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class OldManNPC extends Entity {
 
     public OldManNPC(GamePanel gamePanel) {
-        super(
-                gamePanel, "/npc/old_man/",
-                List.of("oldman_down_1.png",
-                        "oldman_down_2.png",
-                        "oldman_up_1.png",
-                        "oldman_up_2.png",
-                        "oldman_left_1.png",
-                        "oldman_left_2.png",
-                        "oldman_right_1.png",
-                        "oldman_right_2.png")
-        );
+        List<ImageProperties> imageProperties = new ArrayList<>();
+        imageProperties.add(new ImageProperties("oldman_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("oldman_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("oldman_up_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("oldman_up_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("oldman_left_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("oldman_left_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("oldman_right_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("oldman_right_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        super(gamePanel, "/npc/old_man/", imageProperties);
         speed = 1;
         name = "Old Man";
-        setSpriteImages();
         setDialogue();
     }
 
@@ -58,8 +56,4 @@ public class OldManNPC extends Entity {
         super.speak();
     }
 
-    @Override
-    protected void setSpriteImages() {
-        super.setSpriteImages();
-    }
 }

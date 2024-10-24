@@ -2,19 +2,22 @@ package entity.object;
 
 import entity.Entity;
 import main.GamePanel;
+import util.ImageProperties;
 
-import java.util.List;
+import java.awt.image.BufferedImage;
+import java.util.*;
 
 public class ChestObj extends Entity {
 
     public ChestObj(GamePanel gp) {
-        super(gp, "/objects/", List.of("chest.png"));
+        List<ImageProperties> imageProperties = new ArrayList<>();
+        imageProperties.add(new ImageProperties("chest.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        super(gp, "/objects/", imageProperties);
         name = "Chest";
-        setSpriteImages();
     }
 
     @Override
-    protected void setSpriteImages() {
-        down1 = images.get(0);
+    protected BufferedImage getSpriteImage() {
+        return images.getFirst();
     }
 }

@@ -5,16 +5,19 @@ import lombok.Setter;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 @Getter
 @Setter
-public class KeyHandler implements KeyListener {
+public class KeyHandler implements KeyListener, MouseListener {
     private final GamePanel gamePanel;
     private boolean upPressed;
     private boolean downPressed;
     private boolean leftPressed;
     private boolean rightPressed;
     private boolean enterPressed;
+    private boolean lmbPressed;
 
     public KeyHandler(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -76,20 +79,42 @@ public class KeyHandler implements KeyListener {
         int code = e.getKeyCode();
 
         switch (code) {
-            case KeyEvent.VK_W -> {
-                setUpPressed(false);
-            }
-            case KeyEvent.VK_A -> {
-                setLeftPressed(false);
-            }
-            case KeyEvent.VK_S -> {
-                setDownPressed(false);
-            }
-            case KeyEvent.VK_D -> {
-                setRightPressed(false);
-            }
-            default -> {
-            }
+            case KeyEvent.VK_W -> setUpPressed(false);
+            case KeyEvent.VK_A -> setLeftPressed(false);
+            case KeyEvent.VK_S -> setDownPressed(false);
+            case KeyEvent.VK_D -> setRightPressed(false);
+            case KeyEvent.VK_ENTER -> setEnterPressed(false);
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+        switch (e.getButton()) {
+            case MouseEvent.BUTTON1 -> setLmbPressed(true);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+        switch (e.getButton()) {
+            case MouseEvent.BUTTON1 -> setLmbPressed(false);
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

@@ -1,6 +1,5 @@
 package main;
 
-import entity.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import entity.object.HeartObj;
@@ -23,7 +22,7 @@ public class UI {
     @Getter
     private Command currentCommand = Command.NEW_GAME;
     @Getter
-    private BufferedImage heartFull, heartHalf, heartBlank;
+    private BufferedImage heartFull, heartHalf, heartEmpty;
 
     public UI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -42,10 +41,10 @@ public class UI {
     }
 
     private void createHUDObject() {
-        Entity heart = new HeartObj(gamePanel);
-        heartFull = heart.getImage(0);
-        heartHalf = heart.getImage(1);
-        heartBlank = heart.getImage(2);
+        HeartObj heart = new HeartObj(gamePanel);
+        heartFull = heart.getFull();
+        heartHalf = heart.getHalf();
+        heartEmpty = heart.getEmpty();
     }
 
     public int getCenteredTextXCoordinate(final String text) {
@@ -71,7 +70,7 @@ public class UI {
         int x = 0;
         int y = 0;
         for (int i = 0; i < gamePanel.getPlayer().getMaxLife() / 2; i++) {
-            g2d.drawImage(heartBlank, x, y, null);
+            g2d.drawImage(heartEmpty, x, y, null);
             x += GamePanel.TILE_SIZE;
         }
         x = 0;
@@ -115,7 +114,7 @@ public class UI {
         // CHARACTER
         x = GamePanel.SCREEN_WIDTH / 2 - GamePanel.TILE_SIZE;
         y += GamePanel.TILE_SIZE * 2;
-        g2d.drawImage(gamePanel.getPlayer().getDown1(), x, y, GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE * 2, null);
+        g2d.drawImage(gamePanel.getPlayer().getImages().getFirst(), x, y, GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE * 2, null);
         // MENU
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 28F));
 

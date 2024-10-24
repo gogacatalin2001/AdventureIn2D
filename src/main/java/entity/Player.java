@@ -2,10 +2,15 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.*;
+import main.CollisionHandler;
+import main.GamePanel;
+import main.GameState;
+import main.KeyHandler;
+import util.ImageProperties;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends Entity {
@@ -24,16 +29,24 @@ public class Player extends Entity {
     private boolean collision = false;
 
     public Player(GamePanel gp, KeyHandler kh, EntityHandler ah) {
-        super(gp, "/entities/blue_boy/Walking/",
-                List.of("boy_down_1.png",
-                        "boy_down_2.png",
-                        "boy_up_1.png",
-                        "boy_up_2.png",
-                        "boy_left_1.png",
-                        "boy_left_2.png",
-                        "boy_right_1.png",
-                        "boy_right_2.png")
-        );
+        List<ImageProperties> imageProperties = new ArrayList<>();
+        imageProperties.add(new ImageProperties("boy_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_up_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_up_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_left_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_left_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_right_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_right_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_attack_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE * 2));
+        imageProperties.add(new ImageProperties("boy_attack_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE * 2));
+        imageProperties.add(new ImageProperties("boy_attack_up_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE * 2));
+        imageProperties.add(new ImageProperties("boy_attack_up_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE * 2));
+        imageProperties.add(new ImageProperties("boy_attack_left_1.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_attack_left_2.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_attack_right_1.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
+        imageProperties.add(new ImageProperties("boy_attack_right_2.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
+        super(gp, "/entities/blue_boy/", imageProperties);
         this.gamePanel = gp;
         this.keyHandler = kh;
         this.entityHandler = ah;
@@ -46,7 +59,6 @@ public class Player extends Entity {
         collisionBoxDefaultY = collisionBox.y;
         collisionBox.width = 32;
         collisionBox.height = 32;
-        setSpriteImages();
         setDefaultValues();
     }
 
@@ -62,65 +74,103 @@ public class Player extends Entity {
         life = maxLife;
     }
 
-    @Override
-    protected void setSpriteImages() {
-        super.setSpriteImages();
-    }
 
     @Override
     public void update() {
-        if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
-                keyHandler.isLeftPressed() || keyHandler.isRightPressed()) {
-            // Handle character movement
-            if (keyHandler.isUpPressed()) {
-                direction = Direction.UP;
-            } else if (keyHandler.isDownPressed()) {
-                direction = Direction.DOWN;
-            } else if (keyHandler.isLeftPressed()) {
-                direction = Direction.LEFT;
-            } else {
-                direction = Direction.RIGHT;
-            }
+        switch (action) {
+            case WALK -> {
+                if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
+                        keyHandler.isLeftPressed() || keyHandler.isRightPressed() || keyHandler.isEnterPressed()) {
+                    // Handle character movement
+                    if (keyHandler.isUpPressed()) {
+                        direction = Direction.UP;
+                    } else if (keyHandler.isDownPressed()) {
+                        direction = Direction.DOWN;
+                    } else if (keyHandler.isLeftPressed()) {
+                        direction = Direction.LEFT;
+                    } else if (keyHandler.isRightPressed()) {
+                        direction = Direction.RIGHT;
+                    }
 
-            // COLLISION
-            // tiles
-            collisionDetected = false;
-            CollisionHandler.checkTileCollision(this, gamePanel.getTileManager());
-            // objects
-            int collisionObjectIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getObjects());
-            reactToObject(collisionObjectIndex);
-            // NPCs
-            int npcIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getNpcs());
-            System.out.println("NPC: " + npcIndex);
-            interactNPC(npcIndex);
-            // monsters
-            int monsterIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getMonsters());
-            System.out.println("MON: " + monsterIndex);
-            touchMonster(monsterIndex);
+                    // COLLISION
+                    // tiles
+                    collisionDetected = false;
+                    CollisionHandler.checkTileCollision(this, gamePanel.getTileManager());
+                    // objects
+                    int collisionObjectIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getObjects());
+                    reactToObject(collisionObjectIndex);
+                    // NPCs
+                    int npcIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getNpcs());
+                    System.out.println("NPC: " + npcIndex);
+                    interactNPC(npcIndex);
+                    // monsters
+                    int monsterIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getMonsters());
+                    System.out.println("MON: " + monsterIndex);
+                    touchMonster(monsterIndex);
 
-            // CHECK EVENT
-            gamePanel.getEventHandler().checkEvent();
+                    // CHECK EVENT
+                    gamePanel.getEventHandler().checkEvent();
 
-            keyHandler.setEnterPressed(false);
-            super.move();
+                    move();
 
-            // Change between sprites for character movement
-            spriteCounter++;
-            if (spriteCounter > SPRITE_UPDATE_SPEED) {
-                if (spriteNumber == 1) {
-                    spriteNumber = 2;
-                } else {
-                    spriteNumber = 1;
+                    keyHandler.setEnterPressed(false);
+
+                    // Change between sprites for character movement
+                    spriteCounter++;
+                    if (spriteCounter > SPRITE_UPDATE_SPEED) {
+                        if (spriteNumber == 1) {
+                            spriteNumber = 2;
+                        } else {
+                            spriteNumber = 1;
+                        }
+                        spriteCounter = 0;
+                    }
+
                 }
-                spriteCounter = 0;
+            }
+            case ATTACK -> {
+                attack();
             }
         }
+
+        // MOUSE
+        if (keyHandler.isLmbPressed()) {
+            action = Action.ATTACK;
+            System.out.println("LMB pressed");
+        }
+
         // Needs to increment always
         if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > 60) {
                 invincible = false;
                 invincibleCounter = 0;
+            }
+        }
+    }
+
+    private void attack() {
+        spriteCounter++;
+
+        if (spriteCounter <= 5) {
+            spriteNumber = 1;
+        } else if (spriteCounter <= 25) {
+            spriteNumber = 2;
+        } else {
+            spriteNumber = 1;
+            spriteCounter = 0;
+            action = Action.WALK;
+        }
+    }
+
+    @Override
+    protected void move() {
+        if (!collisionDetected && !keyHandler.isEnterPressed()) {
+            switch (direction) {
+                case UP -> worldY -= speed;
+                case DOWN -> worldY += speed;
+                case LEFT -> worldX -= speed;
+                case RIGHT -> worldX += speed;
             }
         }
     }
@@ -150,12 +200,12 @@ public class Player extends Entity {
     }
 
     public void draw(Graphics2D g2d) {
+        BufferedImage image = getSpriteImage();
         if (invincible) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         }
         // Draw player image
-        BufferedImage image = getSpriteImage();
-        g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
+        g2d.drawImage(image, screenX, screenY, image.getWidth(), image.getHeight(), null);
         // Reset alpha
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
