@@ -16,7 +16,7 @@ import java.util.List;
 
 @Getter
 public abstract class Entity {
-    public static final int SPRITE_UPDATE_SPEED = 12;
+    protected final int SPRITE_UPDATE_SPEED = 12;
     protected final GamePanel gamePanel;
     // STATE
     protected String name;
@@ -27,6 +27,7 @@ public abstract class Entity {
     protected boolean invincible = false;
     @Setter
     protected int invincibleCounter = 0;
+    protected int invincibleTimer = 60;
     @Setter
     protected Action action = Action.WALK;
     // SPRITE SETTINGS
@@ -47,9 +48,11 @@ public abstract class Entity {
     protected int speed;
     @Setter
     protected Direction direction = Direction.DOWN;
-    // NPC INTERACTIONS
+    // INTERACTIONS
     protected List<String> dialogues = new ArrayList<>();
     protected int dialogueIndex = 0;
+    // ACTIONS
+    protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
 
     public Entity(GamePanel gp, String imageBasePath, List<ImageProperties> imageProperties) {
         this.gamePanel = gp;
@@ -60,7 +63,7 @@ public abstract class Entity {
     public void update() {
         setAction();
 
-        // CHECK COLLISION
+        // COLLISION
         // tile
         collisionDetected = false;
         CollisionHandler.checkTileCollision(this, gamePanel.getTileManager());
@@ -75,7 +78,7 @@ public abstract class Entity {
 
         move();
 
-        // Change between sprites for character movement
+        // SPRITE
         spriteCounter++;
         if (spriteCounter > SPRITE_UPDATE_SPEED) {
             if (spriteNumber == 1) {
@@ -85,7 +88,14 @@ public abstract class Entity {
             }
             spriteCounter = 0;
         }
-
+        // ATTACK
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > invincibleTimer) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
     }
 
     public void draw(Graphics2D g2d) {
@@ -94,7 +104,13 @@ public abstract class Entity {
 
         if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
             BufferedImage image = getSpriteImage();
+            // Modify alpha when attacked
+            if (invincible) {
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+            }
             g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
+            // Reset alpha
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
     }
 
@@ -114,7 +130,6 @@ public abstract class Entity {
     }
 
     protected void setDefaultValues() {
-
     }
 
     public void speak() {

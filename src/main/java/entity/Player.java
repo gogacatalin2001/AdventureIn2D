@@ -59,6 +59,7 @@ public class Player extends Entity {
 //        worldY = GamePanel.TILE_SIZE * 21;
         screenX = GamePanel.SCREEN_WIDTH / 2 - (GamePanel.TILE_SIZE / 2);
         screenY = GamePanel.SCREEN_HEIGHT / 2 - (GamePanel.TILE_SIZE / 2);
+
         collisionBox = new Rectangle();
         collisionBox.x = 8;
         collisionBox.y = 16;
@@ -66,6 +67,10 @@ public class Player extends Entity {
         collisionBoxDefaultY = collisionBox.y;
         collisionBox.width = 32;
         collisionBox.height = 32;
+
+        attackArea.width = 36;
+        attackArea.height = 36;
+
         // Player starting position in world coordinates
         worldX = GamePanel.TILE_SIZE * 10;
         worldY = GamePanel.TILE_SIZE * 13;
@@ -132,14 +137,6 @@ public class Player extends Entity {
             System.out.println("LMB pressed");
         }
 
-        // INTERACTION
-        if (invincible) {
-            invincibleCounter++;
-            if (invincibleCounter > 60) {
-                invincible = false;
-                invincibleCounter = 0;
-            }
-        }
     }
 
     private void attack() {
@@ -149,10 +146,44 @@ public class Player extends Entity {
             spriteNumber = 1;
         } else if (spriteCounter <= 25) {
             spriteNumber = 2;
+            // Save current player position
+            int currentWorldX = worldX;
+            int currentWorldY = worldY;
+            // Move player to attacked position
+            switch (direction) {
+                case DOWN -> worldY = this.worldY + attackArea.height;
+                case UP -> worldY = this.worldY - attackArea.height;
+                case LEFT -> worldX = this.worldX - attackArea.width;
+                case RIGHT -> worldX = this.worldX + attackArea.width;
+            }
+            // Check collision
+            int monsterIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getMonsters());
+            // Perform attack
+            dealDamage(monsterIndex);
+            // Restore default position
+            worldX = currentWorldX;
+            worldY = currentWorldY;
         } else {
             spriteNumber = 1;
             spriteCounter = 0;
             action = Action.WALK;
+        }
+    }
+
+    private void dealDamage(int entityIndex) {
+        if (entityIndex >= 0) {
+            Entity entity = entityHandler.getMonsters().get(entityIndex);
+            if (!entity.invincible) {
+                entity.setLife(entity.getLife() - 1);
+                entity.invincible = true;
+
+                if (entity.life <= 0) {
+                    entityHandler.removeMonster(entityIndex);
+                }
+            }
+            System.out.println("Attacking entity at (x, y): (" + entity.worldX + "," + entity.worldY + ")");
+        } else {
+            System.out.println("Miss!");
         }
     }
 

@@ -15,17 +15,22 @@ public class GreenSlimeMonster extends Entity {
         imageMap.add(new ImageProperties("greenslime_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageMap.add(new ImageProperties("greenslime_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         super(gp, "/monsters/", imageMap);
+        setAction();
+    }
+
+    @Override
+    protected void setDefaultValues() {
         name = "Green Slime";
         speed = 1;
         maxLife = 4;
         life = maxLife;
+        invincibleTimer = 40;
         collisionBox.x = 3;
         collisionBox.y = 18;
         collisionBox.width = 42;
         collisionBox.height = 30;
         collisionBoxDefaultX = collisionBox.x;
         collisionBoxDefaultY = collisionBox.y;
-        setAction();
     }
 
     @Override

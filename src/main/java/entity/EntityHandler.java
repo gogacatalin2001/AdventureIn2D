@@ -53,7 +53,7 @@ public class EntityHandler {
     }
 
     public void drawNPCs(final Graphics2D g2d) {
-        npcs.forEach(npc-> npc.draw(g2d));
+        npcs.forEach(npc -> npc.draw(g2d));
     }
 
     public void setMonsters() {
@@ -79,6 +79,10 @@ public class EntityHandler {
     }
 
     public void drawMonsters(final Graphics2D g2d) {
-        monsters.forEach(monster-> monster.draw(g2d));
+        monsters.forEach(monster -> monster.draw(g2d));
+    }
+
+    public void removeMonster(int index) {
+        monsters.remove(index);
     }
 }
