@@ -31,8 +31,6 @@ public abstract class Entity {
     protected Action action = Action.WALK;
     // SPRITE SETTINGS
     protected List<BufferedImage> images = new ArrayList<>();
-//    protected BufferedImage down1, down2, up1, up2, left1, left2, right1, right2;
-//    protected BufferedImage attackDown1, attackDown2, attackUp1, attackUp2, attackLeft1, attackLeft2, attackRight1, attackRight2;
     protected int spriteCounter = 0;
     protected int spriteNumber = 1;
     // MOVEMENT
@@ -56,6 +54,7 @@ public abstract class Entity {
     public Entity(GamePanel gp, String imageBasePath, List<ImageProperties> imageProperties) {
         this.gamePanel = gp;
         loadImages(imageBasePath, imageProperties);
+        setDefaultValues();
     }
 
     public void update() {
@@ -111,6 +110,10 @@ public abstract class Entity {
     }
 
     protected void setAction() {
+
+    }
+
+    protected void setDefaultValues() {
 
     }
 

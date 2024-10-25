@@ -50,6 +50,13 @@ public class Player extends Entity {
         this.gamePanel = gp;
         this.keyHandler = kh;
         this.entityHandler = ah;
+        setDefaultValues();
+    }
+
+    @Override
+    protected void setDefaultValues() {
+//        worldX = GamePanel.TILE_SIZE * 23;
+//        worldY = GamePanel.TILE_SIZE * 21;
         screenX = GamePanel.SCREEN_WIDTH / 2 - (GamePanel.TILE_SIZE / 2);
         screenY = GamePanel.SCREEN_HEIGHT / 2 - (GamePanel.TILE_SIZE / 2);
         collisionBox = new Rectangle();
@@ -59,18 +66,10 @@ public class Player extends Entity {
         collisionBoxDefaultY = collisionBox.y;
         collisionBox.width = 32;
         collisionBox.height = 32;
-        setDefaultValues();
-    }
-
-    public void setDefaultValues() {
         // Player starting position in world coordinates
-//        worldX = GamePanel.TILE_SIZE * 23;
-//        worldY = GamePanel.TILE_SIZE * 21;
-
         worldX = GamePanel.TILE_SIZE * 10;
         worldY = GamePanel.TILE_SIZE * 13;
         speed = 4;
-        direction = Direction.DOWN;
         life = maxLife;
     }
 
@@ -81,7 +80,7 @@ public class Player extends Entity {
             case WALK -> {
                 if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
                         keyHandler.isLeftPressed() || keyHandler.isRightPressed() || keyHandler.isEnterPressed()) {
-                    // Handle character movement
+                    // MOVEMENT
                     if (keyHandler.isUpPressed()) {
                         direction = Direction.UP;
                     } else if (keyHandler.isDownPressed()) {
@@ -91,7 +90,6 @@ public class Player extends Entity {
                     } else if (keyHandler.isRightPressed()) {
                         direction = Direction.RIGHT;
                     }
-
                     // COLLISION
                     // tiles
                     collisionDetected = false;
@@ -107,15 +105,13 @@ public class Player extends Entity {
                     int monsterIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getMonsters());
                     System.out.println("MON: " + monsterIndex);
                     touchMonster(monsterIndex);
-
-                    // CHECK EVENT
+                    // EVENTS
                     gamePanel.getEventHandler().checkEvent();
 
                     move();
 
                     keyHandler.setEnterPressed(false);
-
-                    // Change between sprites for character movement
+                    // SPRITE
                     spriteCounter++;
                     if (spriteCounter > SPRITE_UPDATE_SPEED) {
                         if (spriteNumber == 1) {
@@ -125,12 +121,9 @@ public class Player extends Entity {
                         }
                         spriteCounter = 0;
                     }
-
                 }
             }
-            case ATTACK -> {
-                attack();
-            }
+            case ATTACK -> attack();
         }
 
         // MOUSE
@@ -139,7 +132,7 @@ public class Player extends Entity {
             System.out.println("LMB pressed");
         }
 
-        // Needs to increment always
+        // INTERACTION
         if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > 60) {
@@ -199,13 +192,23 @@ public class Player extends Entity {
         }
     }
 
+    @Override
     public void draw(Graphics2D g2d) {
         BufferedImage image = getSpriteImage();
+        int tempScreenX = screenX;
+        int tempScreenY = screenY;
+        // Offset sprite image to correct position if width or height are bigger than {@link GamePanel.TILE_SIZE}
+        if (action == Action.ATTACK) {
+            switch (direction) {
+                case UP -> tempScreenY -= GamePanel.TILE_SIZE;
+                case LEFT -> tempScreenX -= GamePanel.TILE_SIZE;
+            }
+        }
         if (invincible) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         }
         // Draw player image
-        g2d.drawImage(image, screenX, screenY, image.getWidth(), image.getHeight(), null);
+        g2d.drawImage(image, tempScreenX, tempScreenY, image.getWidth(), image.getHeight(), null);
         // Reset alpha
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
