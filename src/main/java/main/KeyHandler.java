@@ -60,7 +60,7 @@ public class KeyHandler implements KeyListener, MouseListener {
                         switch (gamePanel.getUi().getCurrentCommand()) {
                             case NEW_GAME -> {
                                 gamePanel.setGameState(GameState.PLAY);
-                                gamePanel.playMusic(0);
+                                gamePanel.playMusic(SoundHandler.THEME_SONG);
                             }
                             case LOAD_GAME -> {
                                 // todo add game loading

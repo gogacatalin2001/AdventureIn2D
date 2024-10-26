@@ -2,10 +2,7 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.CollisionHandler;
-import main.GamePanel;
-import main.GameState;
-import main.KeyHandler;
+import main.*;
 import util.ImageProperties;
 
 import java.awt.*;
@@ -77,6 +74,8 @@ public class Player extends Entity {
 
     @Override
     public void update() {
+        // INVINCIBLE STATE
+        updateInvincibleState();
         switch (action) {
             case WALK -> {
                 if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
@@ -126,18 +125,19 @@ public class Player extends Entity {
             }
             case ATTACK -> attack();
         }
-
         // MOUSE
         if (keyHandler.isLmbPressed()) {
             action = Action.ATTACK;
             System.out.println("LMB pressed");
         }
-
     }
 
     private void attack() {
         spriteCounter++;
 
+        if (spriteCounter < 2) {
+            gamePanel.playSoundEffect(SoundHandler.WEAPON_SWING_SOUND);
+        }
         if (spriteCounter <= 5) {
             spriteNumber = 1;
         } else if (spriteCounter <= 25) {
@@ -170,6 +170,7 @@ public class Player extends Entity {
         if (entityIndex >= 0) {
             Entity entity = entityHandler.getMonsters().get(entityIndex);
             if (!entity.invincible) {
+                gamePanel.playSoundEffect(SoundHandler.HIT_MONSTER_SOUND);
                 entity.setLife(entity.getLife() - 1);
                 entity.invincible = true;
 
@@ -198,6 +199,7 @@ public class Player extends Entity {
     private void touchMonster(int monsterIndex) {
         if (monsterIndex >= 0 && collisionDetected) {
             if (!invincible) {
+                gamePanel.playSoundEffect(SoundHandler.RECEIVE_DAMAGE_SOUND);
                 life--;
                 invincible = true;
             }

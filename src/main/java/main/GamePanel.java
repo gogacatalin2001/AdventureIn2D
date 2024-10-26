@@ -155,8 +155,8 @@ public class GamePanel extends JPanel implements Runnable {
                 worldY - GamePanel.TILE_SIZE < player.getWorldY() + player.getScreenY();
     }
 
-    public void playMusic(int index) {
-        musicHandler.setFile(index);
+    public void playMusic(final String sound) {
+        musicHandler.setFile(sound);
         musicHandler.play();
         musicHandler.loop();
     }
@@ -165,8 +165,8 @@ public class GamePanel extends JPanel implements Runnable {
         musicHandler.stop();
     }
 
-    public void playSoundEffect(int index) {
-        soundEffectHandler.setFile(index);
+    public void playSoundEffect(final String sound) {
+        soundEffectHandler.setFile(sound);
         soundEffectHandler.play();
     }
 }

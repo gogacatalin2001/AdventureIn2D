@@ -94,6 +94,10 @@ public abstract class Entity {
             spriteCounter = 0;
         }
         // ATTACK
+        updateInvincibleState();
+    }
+
+    protected void updateInvincibleState() {
         if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > invincibleTimer) {
