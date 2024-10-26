@@ -15,12 +15,6 @@ public class Player extends Entity {
     // MOVEMENT
     @Getter
     @Setter
-    private int screenX;
-    @Getter
-    @Setter
-    private int screenY;
-    @Getter
-    @Setter
     private boolean collision = false;
 
     public Player(GamePanel gp, KeyHandler kh, EntityHandler eh) {

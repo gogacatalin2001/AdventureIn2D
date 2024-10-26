@@ -74,7 +74,6 @@ public class UI {
             x += GamePanel.TILE_SIZE;
         }
         x = 0;
-        y = 0;
         for (int i = 0; i < gamePanel.getPlayer().getLife(); i++) {
             g2d.drawImage(heartHalf, x, y, null);
             i++;

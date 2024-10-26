@@ -12,7 +12,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 @Getter
 public abstract class Entity {
@@ -39,6 +41,12 @@ public abstract class Entity {
     protected int spriteCounter = 0;
     protected int spriteNumber = 1;
     // MOVEMENT
+    @Getter
+    @Setter
+    protected int screenX;
+    @Getter
+    @Setter
+    protected int screenY;
     protected int actionLockCounter = 0;
     protected Rectangle collisionBox = new Rectangle(0, 0, 48, 48);
     protected int collisionBoxDefaultX, collisionBoxDefaultY;
@@ -126,17 +134,17 @@ public abstract class Entity {
         }
     }
 
-    private void dyingAnimation(Graphics2D g2d) {
+    protected void dyingAnimation(Graphics2D g2d) {
         dyingCounter++;
 
-        if (dyingCounter % 10 != 0) {
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+        if (dyingCounter % 15 < 7) {
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
         }
         else {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
 
-        if (dyingCounter > 40) {
+        if (dyingCounter > 60) {
             dying = false;
             alive = false;
         }

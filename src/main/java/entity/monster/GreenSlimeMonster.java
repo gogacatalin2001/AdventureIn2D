@@ -1,13 +1,18 @@
 package entity.monster;
 
+import com.sun.jdi.Method;
 import entity.Direction;
 import entity.Entity;
 import entity.EntityHandler;
 import main.GamePanel;
 import util.ImageProperties;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class GreenSlimeMonster extends Entity {
 
@@ -54,7 +59,38 @@ public class GreenSlimeMonster extends Entity {
     }
 
     @Override
+    public void draw(Graphics2D g2d) {
+        int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
+        int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
+
+        if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
+            BufferedImage image = getSpriteImage();
+            // Modify alpha when attacked
+            if (invincible) {
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+            }
+            if (dying) {
+                dyingAnimation(g2d);
+            }
+            // Draw health bar
+            if (life != maxLife) {
+                double hpUnitScale = (double) GamePanel.TILE_SIZE / maxLife;
+                double hpBarValue = life * hpUnitScale;
+                g2d.setColor(new Color(75, 75, 75, 255));
+                g2d.fillRect(screenX, screenY - 15, GamePanel.TILE_SIZE, 10);
+                g2d.setColor(new Color(210, 5, 30));
+                g2d.fillRect(screenX, screenY - 15, (int) hpBarValue, 10);
+            }
+
+            g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
+            // Reset alpha
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        }
+    }
+
+    @Override
     protected BufferedImage getSpriteImage() {
         return images.get(spriteNumber - 1);
     }
+
 }
