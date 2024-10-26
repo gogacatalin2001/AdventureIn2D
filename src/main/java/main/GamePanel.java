@@ -39,12 +39,12 @@ public class GamePanel extends JPanel implements Runnable {
     private final SoundHandler soundEffectHandler = new SoundHandler();
     @Getter
     private final UI ui = new UI(this);
-    @Getter
-    @Setter
-    private Thread gameThread;
     // ENTITIES
     @Getter
     private final Player player = new Player(this, keyHandler, entityHandler);
+    @Getter
+    @Setter
+    private Thread gameThread;
     // GAME STATE
     @Getter
     @Setter
@@ -101,11 +101,25 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         if (gameState == GameState.PLAY) {
             player.update();
-            entityHandler.getNpcs().forEach(Entity::update);
-            entityHandler.getMonsters().forEach(Entity::update);
+            updateEntities(entityHandler.getNpcs());
+            updateEntities(entityHandler.getMonsters());
+
         } else if (gameState == GameState.PAUSE) {
             // do nothing
         }
+    }
+
+    private void updateEntities(final List<Entity> entities) {
+        entities.forEach(entity -> {
+            if (entity != null) {
+                if (entity.isAlive() && !entity.isDying()) {
+                    entity.update();
+                }
+                if (!entity.isAlive()) {
+                    entityHandler.removeEntity(entity, entityHandler.getMonsters());
+                }
+            }
+        });
     }
 
     @Override

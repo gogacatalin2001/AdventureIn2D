@@ -52,10 +52,12 @@ public abstract class CollisionHandler {
     public static int checkEntityCollision(final Entity entity, final List<Entity> targetEntities) {
         AtomicInteger targetIndex = new AtomicInteger(-1);
         targetEntities.forEach(target -> {
-            boolean collisionDetected = checkCollision(entity, target);
-            entity.setCollisionDetected(entity.isCollisionDetected() || collisionDetected);
-            if (collisionDetected) {
-                targetIndex.set(targetEntities.indexOf(target));
+            if (target != null) {
+                boolean collisionDetected = checkCollision(entity, target);
+                entity.setCollisionDetected(entity.isCollisionDetected() || collisionDetected);
+                if (collisionDetected) {
+                    targetIndex.set(targetEntities.indexOf(target));
+                }
             }
         });
         return targetIndex.get();

@@ -2,6 +2,7 @@ package entity.npc;
 
 import entity.Direction;
 import entity.Entity;
+import entity.EntityHandler;
 import main.GamePanel;
 import util.ImageProperties;
 
@@ -9,7 +10,7 @@ import java.util.*;
 
 public class OldManNPC extends Entity {
 
-    public OldManNPC(GamePanel gamePanel) {
+    public OldManNPC(GamePanel gamePanel, EntityHandler eh) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("oldman_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("oldman_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
@@ -19,7 +20,7 @@ public class OldManNPC extends Entity {
         imageProperties.add(new ImageProperties("oldman_left_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("oldman_right_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("oldman_right_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
-        super(gamePanel, "/npc/old_man/", imageProperties);
+        super(gamePanel, eh, "/npc/old_man/", imageProperties);
         speed = 1;
         name = "Old Man";
         setDialogue();

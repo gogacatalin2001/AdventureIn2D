@@ -41,7 +41,7 @@ public class UI {
     }
 
     private void createHUDObject() {
-        HeartObj heart = new HeartObj(gamePanel);
+        HeartObj heart = new HeartObj(gamePanel, gamePanel.getEntityHandler());
         heartFull = heart.getFull();
         heartHalf = heart.getHalf();
         heartEmpty = heart.getEmpty();

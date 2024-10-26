@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends Entity {
-    private final GamePanel gamePanel;
     private final KeyHandler keyHandler;
-    private final EntityHandler entityHandler;
     // MOVEMENT
     @Getter
     @Setter
@@ -28,7 +26,7 @@ public class Player extends Entity {
     @Setter
     private boolean collision = false;
 
-    public Player(GamePanel gp, KeyHandler kh, EntityHandler ah) {
+    public Player(GamePanel gp, KeyHandler kh, EntityHandler eh) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("boy_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
@@ -46,10 +44,8 @@ public class Player extends Entity {
         imageProperties.add(new ImageProperties("boy_attack_left_2.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_attack_right_1.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_attack_right_2.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
-        super(gp, "/entities/blue_boy/", imageProperties);
-        this.gamePanel = gp;
+        super(gp, eh, "/entities/blue_boy/", imageProperties);
         this.keyHandler = kh;
-        this.entityHandler = ah;
         setDefaultValues();
     }
 
@@ -178,7 +174,7 @@ public class Player extends Entity {
                 entity.invincible = true;
 
                 if (entity.life <= 0) {
-                    entityHandler.removeMonster(entityIndex);
+                    entity.dying = true;
                 }
             }
             System.out.println("Attacking entity at (x, y): (" + entity.worldX + "," + entity.worldY + ")");

@@ -18,6 +18,7 @@ import java.util.List;
 public abstract class Entity {
     protected final int SPRITE_UPDATE_SPEED = 12;
     protected final GamePanel gamePanel;
+    protected final EntityHandler entityHandler;
     // STATE
     protected String name;
     @Setter
@@ -30,6 +31,9 @@ public abstract class Entity {
     protected int invincibleTimer = 60;
     @Setter
     protected Action action = Action.WALK;
+    protected boolean alive = true;
+    protected boolean dying = false;
+    protected int dyingCounter = 0;
     // SPRITE SETTINGS
     protected List<BufferedImage> images = new ArrayList<>();
     protected int spriteCounter = 0;
@@ -54,8 +58,9 @@ public abstract class Entity {
     // ACTIONS
     protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
 
-    public Entity(GamePanel gp, String imageBasePath, List<ImageProperties> imageProperties) {
+    public Entity(GamePanel gp, EntityHandler eh, String imageBasePath, List<ImageProperties> imageProperties) {
         this.gamePanel = gp;
+        this.entityHandler = eh;
         loadImages(imageBasePath, imageProperties);
         setDefaultValues();
     }
@@ -108,9 +113,28 @@ public abstract class Entity {
             if (invincible) {
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
             }
+            if (dying) {
+                dyingAnimation(g2d);
+            }
             g2d.drawImage(image, screenX, screenY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
             // Reset alpha
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        }
+    }
+
+    private void dyingAnimation(Graphics2D g2d) {
+        dyingCounter++;
+
+        if (dyingCounter % 10 != 0) {
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+        }
+        else {
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        }
+
+        if (dyingCounter > 40) {
+            dying = false;
+            alive = false;
         }
     }
 

@@ -24,7 +24,7 @@ public class EntityHandler {
     }
 
     public void setObject() {
-        Entity door1 = new DoorObj(gamePanel);
+        Entity door1 = new DoorObj(gamePanel, this);
         door1.setWorldX(GamePanel.TILE_SIZE * 21);
         door1.setWorldY(GamePanel.TILE_SIZE * 22);
         objects.add(door1);
@@ -42,7 +42,7 @@ public class EntityHandler {
 //        oldMan.setWorldY(GamePanel.TILE_SIZE * 21);
 //        npcs.add(oldMan);
 
-        Entity oldMan = new OldManNPC(gamePanel);
+        Entity oldMan = new OldManNPC(gamePanel, this);
         oldMan.setWorldX(GamePanel.TILE_SIZE * 9);
         oldMan.setWorldY(GamePanel.TILE_SIZE * 10);
         npcs.add(oldMan);
@@ -67,22 +67,27 @@ public class EntityHandler {
 //        slime2.setWorldY(GamePanel.TILE_SIZE * 37);
 //        monsters.add(slime2);
 
-        Entity slime1 = new GreenSlimeMonster(gamePanel);
+        Entity slime1 = new GreenSlimeMonster(gamePanel, this);
         slime1.setWorldX(GamePanel.TILE_SIZE * 11);
         slime1.setWorldY(GamePanel.TILE_SIZE * 10);
         monsters.add(slime1);
 
-        Entity slime2 = new GreenSlimeMonster(gamePanel);
+        Entity slime2 = new GreenSlimeMonster(gamePanel, this);
         slime2.setWorldX(GamePanel.TILE_SIZE * 10);
         slime2.setWorldY(GamePanel.TILE_SIZE * 10);
         monsters.add(slime2);
     }
 
     public void drawMonsters(final Graphics2D g2d) {
-        monsters.forEach(monster -> monster.draw(g2d));
+        monsters.forEach(monster -> {
+            if (monster != null) {
+                monster.draw(g2d);
+            }
+        });
     }
 
-    public void removeMonster(int index) {
-        monsters.remove(index);
+    public void removeEntity(final Entity entity, final List<Entity> entities) {
+        int index = entities.indexOf(entity);
+        monsters.set(index, null);
     }
 }

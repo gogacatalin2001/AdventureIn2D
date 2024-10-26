@@ -2,6 +2,7 @@ package entity.monster;
 
 import entity.Direction;
 import entity.Entity;
+import entity.EntityHandler;
 import main.GamePanel;
 import util.ImageProperties;
 
@@ -10,11 +11,11 @@ import java.util.*;
 
 public class GreenSlimeMonster extends Entity {
 
-    public GreenSlimeMonster(GamePanel gp) {
+    public GreenSlimeMonster(GamePanel gp, EntityHandler eh) {
         List<ImageProperties> imageMap = new ArrayList<>();
         imageMap.add(new ImageProperties("greenslime_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageMap.add(new ImageProperties("greenslime_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
-        super(gp, "/monsters/", imageMap);
+        super(gp, eh, "/monsters/", imageMap);
         setAction();
     }
 
