@@ -59,6 +59,25 @@ public class GreenSlimeMonster extends Entity {
     }
 
     @Override
+    protected void reactToDamage() {
+        if (damageReceived) {
+            actionLockCounter = 0;
+            direction = gamePanel.getPlayer().getDirection();
+
+            damageReceived = false;
+        }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        if (damageReceived) {
+            reactToDamage();
+        }
+    }
+
+    @Override
     public void draw(Graphics2D g2d) {
         int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
         int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();

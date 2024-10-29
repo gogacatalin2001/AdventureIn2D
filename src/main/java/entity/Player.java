@@ -163,10 +163,11 @@ public class Player extends Entity {
     private void dealDamage(int entityIndex) {
         if (entityIndex >= 0) {
             Entity entity = entityHandler.getMonsters().get(entityIndex);
-            if (!entity.invincible) {
+            if (!entity.invincible && !entity.damageReceived) {
                 gamePanel.playSoundEffect(SoundHandler.HIT_MONSTER_SOUND);
                 entity.setLife(entity.getLife() - 1);
                 entity.invincible = true;
+                entity.damageReceived = true;
 
                 if (entity.life <= 0) {
                     entity.dying = true;

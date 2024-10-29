@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 @Getter
@@ -36,6 +37,7 @@ public abstract class Entity {
     protected boolean alive = true;
     protected boolean dying = false;
     protected int dyingCounter = 0;
+    protected boolean damageReceived = false;
     // SPRITE SETTINGS
     protected List<BufferedImage> images = new ArrayList<>();
     protected int spriteCounter = 0;
@@ -161,12 +163,11 @@ public abstract class Entity {
         }
     }
 
-    protected void setAction() {
+    protected void setAction() {}
 
-    }
+    protected void setDefaultValues() {}
 
-    protected void setDefaultValues() {
-    }
+    protected void reactToDamage() {}
 
     public void speak() {
         if (dialogueIndex == dialogues.size()) {
@@ -184,18 +185,13 @@ public abstract class Entity {
     }
 
     protected void loadImages(String basePath, List<ImageProperties> imageProperties) {
-        imageProperties.forEach(properties -> {
-            BufferedImage image = readImage(basePath, properties.imageName(), properties.width(), properties.height());
-            if (image != null) {
-                images.add(image);
-            }
-        });
+        imageProperties.forEach(properties -> images.add(readImage(basePath, properties.imageName(), properties.width(), properties.height())));
     }
 
     protected BufferedImage readImage(String basePath, String imageName, Integer width, Integer height) {
         BufferedImage image = null;
         try {
-            image = ImageIO.read(getClass().getResourceAsStream(basePath + imageName));
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(basePath + imageName)));
             image = ImageScalingUtil.scaleImage(image, width, height);
         } catch (IOException e) {
             System.out.println("Failed to load image: " + basePath + " " + imageName);
