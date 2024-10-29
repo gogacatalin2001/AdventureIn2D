@@ -32,45 +32,60 @@ public class KeyHandler implements KeyListener, MouseListener {
     public void keyPressed(final KeyEvent e) {
         int code = e.getKeyCode();
         switch (gamePanel.getGameState()) {
-            case PLAY -> {
-                switch (code) {
-                    case KeyEvent.VK_W -> setUpPressed(true);
-                    case KeyEvent.VK_A -> setLeftPressed(true);
-                    case KeyEvent.VK_S -> setDownPressed(true);
-                    case KeyEvent.VK_D -> setRightPressed(true);
-                    case KeyEvent.VK_ESCAPE -> gamePanel.setGameState(GameState.PAUSE);
-                    case KeyEvent.VK_ENTER -> setEnterPressed(true);
-                }
-            }
-            case PAUSE -> {
-                switch (code) {
-                    case KeyEvent.VK_ESCAPE -> gamePanel.setGameState(GameState.PLAY);
-                }
-            }
-            case DIALOGUE -> {
-                switch (code) {
-                    case KeyEvent.VK_ENTER -> gamePanel.setGameState(GameState.PLAY);
-                }
-            }
-            case TITLE_SCREEN -> {
-                switch (code) {
-                    case KeyEvent.VK_UP -> gamePanel.getUi().changeCommand(-1);
-                    case KeyEvent.VK_DOWN -> gamePanel.getUi().changeCommand(1);
-                    case KeyEvent.VK_ENTER -> {
-                        switch (gamePanel.getUi().getCurrentCommand()) {
-                            case NEW_GAME -> {
-                                gamePanel.setGameState(GameState.PLAY);
-                                gamePanel.playMusic(SoundHandler.THEME_SONG);
-                            }
-                            case LOAD_GAME -> {
-                                // todo add game loading
-                            }
-                            case QUIT -> System.exit(0);
-                        }
-                    }
-                }
-            }
+            case PLAY -> handlePlayState(code);
+            case PAUSE -> handlePauseState(code);
+            case DIALOGUE -> handleDialogueState(code);
+            case TITLE_SCREEN -> handleTitleScreenState(code);
+            case CHARACTER_SCREEN -> handleCharacterScreenState(code);
+        }
+    }
 
+    private void handleCharacterScreenState(int code) {
+        switch (code) {
+            case KeyEvent.VK_C -> gamePanel.setGameState(GameState.PLAY);
+        }
+    }
+
+    private void handleTitleScreenState(int code) {
+        switch (code) {
+            case KeyEvent.VK_UP -> gamePanel.getUi().changeCommand(-1);
+            case KeyEvent.VK_DOWN -> gamePanel.getUi().changeCommand(1);
+            case KeyEvent.VK_ENTER -> {
+                switch (gamePanel.getUi().getCurrentCommand()) {
+                    case NEW_GAME -> {
+                        gamePanel.setGameState(GameState.PLAY);
+                        gamePanel.playMusic(SoundHandler.THEME_SONG);
+                    }
+                    case LOAD_GAME -> {
+                        // todo add game loading
+                    }
+                    case QUIT -> System.exit(0);
+                }
+            }
+        }
+    }
+
+    private void handleDialogueState(int code) {
+        switch (code) {
+            case KeyEvent.VK_ENTER -> gamePanel.setGameState(GameState.PLAY);
+        }
+    }
+
+    private void handlePauseState(int code) {
+        switch (code) {
+            case KeyEvent.VK_ESCAPE -> gamePanel.setGameState(GameState.PLAY);
+        }
+    }
+
+    private void handlePlayState(int code) {
+        switch (code) {
+            case KeyEvent.VK_W -> setUpPressed(true);
+            case KeyEvent.VK_A -> setLeftPressed(true);
+            case KeyEvent.VK_S -> setDownPressed(true);
+            case KeyEvent.VK_D -> setRightPressed(true);
+            case KeyEvent.VK_ESCAPE -> gamePanel.setGameState(GameState.PAUSE);
+            case KeyEvent.VK_ENTER -> setEnterPressed(true);
+            case KeyEvent.VK_C -> gamePanel.setGameState(GameState.CHARACTER_SCREEN);
         }
     }
 

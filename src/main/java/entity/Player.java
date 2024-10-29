@@ -143,7 +143,7 @@ public class Player extends Entity {
     }
 
     public int getDefenseValue() {
-        return defense = dexterity * currentShield.getDamageValue();
+        return defense = dexterity * currentShield.getDefenseValue();
     }
 
     private void attack() {

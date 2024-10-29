@@ -6,6 +6,7 @@ import entity.Player;
 import lombok.Getter;
 import lombok.Setter;
 import main.event.EventHandler;
+import main.ui.UI;
 import tile.TileManager;
 
 import javax.swing.*;

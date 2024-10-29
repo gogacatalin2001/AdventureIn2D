@@ -1,8 +1,10 @@
-package main;
+package main.ui;
 
+import entity.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import entity.object.HeartObj;
+import main.GamePanel;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -30,6 +32,27 @@ public class UI {
         createHUDObject();
     }
 
+    public void draw(final Graphics2D g2d) {
+        this.g2d = g2d;
+        g2d.setFont(PRUISA_B);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setColor(Color.WHITE);
+
+        switch (gamePanel.getGameState()) {
+            case TITLE_SCREEN -> drawTitleScreen();
+            case PLAY -> drawPlayerLife();
+            case PAUSE -> {
+                drawPauseScreen();
+                drawPlayerLife();
+            }
+            case DIALOGUE -> {
+                drawDialogueScreen();
+                drawPlayerLife();
+            }
+            case CHARACTER_SCREEN -> drawCharacterScreen();
+        }
+    }
+
     private void loadFont() {
         try (InputStream inputStream = getClass().getResourceAsStream("/fonts/Purisa Bold.ttf")) {
             PRUISA_B = Font.createFont(Font.TRUETYPE_FONT, inputStream);
@@ -47,23 +70,105 @@ public class UI {
         heartEmpty = heart.getEmpty();
     }
 
-    public int getCenteredTextXCoordinate(final String text) {
+    private int getCenteredTextXCoordinate(final String text) {
         int textLength = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
         return GamePanel.SCREEN_WIDTH / 2 - textLength / 2;
     }
 
-    public void draw(final Graphics2D g2d) {
-        this.g2d = g2d;
-        g2d.setFont(PRUISA_B);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setColor(Color.WHITE);
 
-        switch (gamePanel.getGameState()) {
-            case TITLE_SCREEN -> drawTitleScreen();
-            case PLAY -> drawPlayerLife();
-            case PAUSE -> drawPauseScreen();
-            case DIALOGUE -> drawDialogueScreen();
-        }
+    private void drawCharacterScreen() {
+        // DRAW FRAME
+        final int frameX = GamePanel.TILE_SIZE;
+        final int frameY = GamePanel.TILE_SIZE;
+        final int frameWidth = GamePanel.TILE_SIZE * 6;
+        final int frameHeight = GamePanel.TILE_SIZE * 10;
+        drawWindow(frameX, frameY, frameWidth, frameHeight);
+
+        // TEXT
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(g2d.getFont().deriveFont(24F));
+        int textX = frameX + 20;
+        int textY = frameY + GamePanel.TILE_SIZE;
+        final int lineHeight = 32;
+
+        // NAMES
+        g2d.drawString("Level", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Strength", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Dexterity", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Attack", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Defense", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Experience", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Next Level", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Coins", textX, textY);
+        textY += lineHeight;
+        textY += GamePanel.TILE_SIZE / 2;
+        g2d.drawString("Weapon", textX, textY);
+        textY += lineHeight;
+        textY += GamePanel.TILE_SIZE / 2;
+        g2d.drawString("Shield", textX, textY);
+
+        // VALUES
+        int tailX = (frameX + frameWidth) - 30;
+        textY = frameY + GamePanel.TILE_SIZE;
+        String value;
+        Entity player = gamePanel.getPlayer();
+
+        value = String.valueOf(player.getLevel());
+        textX = getRightAlignmentXCoordinate(value, tailX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(player.getStrength());
+        textX = getRightAlignmentXCoordinate(value, tailX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(player.getDexterity());
+        textX = getRightAlignmentXCoordinate(value, tailX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(player.getAttack());
+        textX = getRightAlignmentXCoordinate(value, tailX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(player.getDefense());
+        textX = getRightAlignmentXCoordinate(value, tailX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(player.getExperience());
+        textX = getRightAlignmentXCoordinate(value, tailX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(player.getNextLevelExperience());
+        textX = getRightAlignmentXCoordinate(value, tailX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(player.getCoins());
+        textX = getRightAlignmentXCoordinate(value, tailX);
+        g2d.drawString(value, textX, textY);
+        textY += GamePanel.TILE_SIZE / 2;
+        textY += lineHeight;
+
+        g2d.drawImage(player.getCurrentWeapon().getSpriteImage(), tailX - GamePanel.TILE_SIZE, textY, null);
+        textY += GamePanel.TILE_SIZE / 2;
+        g2d.drawImage(player.getCurrentShield().getSpriteImage(), tailX - GamePanel.TILE_SIZE, textY, null);
+    }
+
+    private int getRightAlignmentXCoordinate(String text, int rightX) {
+        int length = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
+        return rightX - length;
     }
 
     private void drawPlayerLife() {
