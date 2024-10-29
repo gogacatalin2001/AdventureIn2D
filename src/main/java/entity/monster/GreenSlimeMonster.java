@@ -108,7 +108,7 @@ public class GreenSlimeMonster extends Entity {
     }
 
     @Override
-    protected BufferedImage getSpriteImage() {
+    public BufferedImage getSpriteImage() {
         return images.get(spriteNumber - 1);
     }
 

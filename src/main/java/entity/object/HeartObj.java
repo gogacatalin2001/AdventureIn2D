@@ -27,7 +27,7 @@ public class HeartObj extends Entity {
     }
 
     @Override
-    protected BufferedImage getSpriteImage() {
+    public BufferedImage getSpriteImage() {
         return full;
     }
 }

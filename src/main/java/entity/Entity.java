@@ -1,8 +1,10 @@
 package entity;
 
+import entity.weapon.Weapon;
 import lombok.Getter;
 import lombok.Setter;
 import main.CollisionHandler;
+import main.Drawable;
 import main.GamePanel;
 import util.ImageProperties;
 import util.ImageScalingUtil;
@@ -12,13 +14,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 @Getter
-public abstract class Entity {
+public abstract class Entity implements Drawable {
     protected final int SPRITE_UPDATE_SPEED = 12;
     protected final GamePanel gamePanel;
     protected final EntityHandler entityHandler;
@@ -67,6 +67,18 @@ public abstract class Entity {
     protected int dialogueIndex = 0;
     // ACTIONS
     protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
+    // CHARACTER ATTRIBUTES
+    protected int level;
+    protected int strength;
+    protected int dexterity;
+    protected int intelligence;
+    protected int attack;
+    protected int defense;
+    protected int experience;
+    protected int nextLevelExperience;
+    protected int coins;
+    protected Weapon currentWeapon;
+    protected Weapon currentShield;
 
     public Entity(GamePanel gp, EntityHandler eh, String imageBasePath, List<ImageProperties> imageProperties) {
         this.gamePanel = gp;
@@ -117,6 +129,7 @@ public abstract class Entity {
         }
     }
 
+    @Override
     public void draw(Graphics2D g2d) {
         int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
         int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
@@ -184,11 +197,13 @@ public abstract class Entity {
         }
     }
 
-    protected void loadImages(String basePath, List<ImageProperties> imageProperties) {
+    @Override
+    public void loadImages(String basePath, List<ImageProperties> imageProperties) {
         imageProperties.forEach(properties -> images.add(readImage(basePath, properties.imageName(), properties.width(), properties.height())));
     }
 
-    protected BufferedImage readImage(String basePath, String imageName, Integer width, Integer height) {
+    @Override
+    public BufferedImage readImage(String basePath, String imageName, Integer width, Integer height) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(basePath + imageName)));
@@ -199,8 +214,8 @@ public abstract class Entity {
         return image;
     }
 
-
-    protected BufferedImage getSpriteImage() {
+    @Override
+    public BufferedImage getSpriteImage() {
         int actionIndex = action.ordinal() * 8;
         int directionIndex = direction.ordinal() * 2;
 

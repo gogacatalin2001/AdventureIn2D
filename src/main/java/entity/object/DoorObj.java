@@ -25,7 +25,7 @@ public class DoorObj extends Entity {
     }
 
     @Override
-    protected BufferedImage getSpriteImage() {
+    public BufferedImage getSpriteImage() {
         return images.getFirst();
     }
 }

@@ -19,7 +19,7 @@ public class KeyObj extends Entity {
     }
 
     @Override
-    protected BufferedImage getSpriteImage() {
+    public BufferedImage getSpriteImage() {
         return images.getFirst();
     }
 }

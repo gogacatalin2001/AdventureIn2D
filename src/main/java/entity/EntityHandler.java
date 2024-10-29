@@ -3,6 +3,7 @@ package entity;
 import entity.monster.GreenSlimeMonster;
 import entity.npc.OldManNPC;
 import entity.object.DoorObj;
+import entity.weapon.Weapon;
 import lombok.Getter;
 import main.GamePanel;
 

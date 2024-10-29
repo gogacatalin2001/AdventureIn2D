@@ -1,5 +1,7 @@
 package entity;
 
+import entity.weapon.NormalSword;
+import entity.weapon.WoodenShield;
 import lombok.Getter;
 import lombok.Setter;
 import main.*;
@@ -44,9 +46,10 @@ public class Player extends Entity {
     protected void setDefaultValues() {
 //        worldX = GamePanel.TILE_SIZE * 23;
 //        worldY = GamePanel.TILE_SIZE * 21;
+        // SCREEN
         screenX = GamePanel.SCREEN_WIDTH / 2 - (GamePanel.TILE_SIZE / 2);
         screenY = GamePanel.SCREEN_HEIGHT / 2 - (GamePanel.TILE_SIZE / 2);
-
+        // COLLISION
         collisionBox = new Rectangle();
         collisionBox.x = 8;
         collisionBox.y = 16;
@@ -54,15 +57,24 @@ public class Player extends Entity {
         collisionBoxDefaultY = collisionBox.y;
         collisionBox.width = 32;
         collisionBox.height = 32;
-
+        // ATTACK
         attackArea.width = 36;
         attackArea.height = 36;
-
-        // Player starting position in world coordinates
+        // POSITION
         worldX = GamePanel.TILE_SIZE * 10;
         worldY = GamePanel.TILE_SIZE * 13;
+        // CHARACTER
         speed = 4;
         life = maxLife;
+        strength = 1;
+        dexterity = 1;
+        experience = 0;
+        nextLevelExperience = 5;
+        coins = 0;
+        currentWeapon = new NormalSword(gamePanel, entityHandler);
+        currentShield = new WoodenShield(gamePanel, entityHandler);
+        attack = getAttackValue();
+        defense = getDefenseValue();
     }
 
 
@@ -124,6 +136,14 @@ public class Player extends Entity {
             action = Action.ATTACK;
             System.out.println("LMB pressed");
         }
+    }
+
+    public int getAttackValue() {
+        return attack = strength * currentWeapon.getDamageValue();
+    }
+
+    public int getDefenseValue() {
+        return defense = dexterity * currentShield.getDamageValue();
     }
 
     private void attack() {
