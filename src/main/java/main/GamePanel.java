@@ -7,12 +7,14 @@ import lombok.Getter;
 import lombok.Setter;
 import main.event.EventHandler;
 import main.ui.UI;
+import sound.SoundHandler;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+@Getter
 public class GamePanel extends JPanel implements Runnable {
     // TODO: maybe add achievements (finish one level before the theme song finishes playing once??)
     // SCREEN SETTINGS
@@ -28,26 +30,17 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int MAX_WORLD_COL = 50;
     public static final int MAX_WORLD_ROW = 50;
     // GAME SYSTEM
-    @Getter
-    private final KeyHandler keyHandler = new KeyHandler(this);
-    @Getter
     private final TileManager tileManager = new TileManager(this);
-    @Getter
     private final EventHandler eventHandler = new EventHandler(this);
-    @Getter
     private final EntityHandler entityHandler = new EntityHandler(this);
-    private final SoundHandler musicHandler = new SoundHandler();
-    private final SoundHandler soundEffectHandler = new SoundHandler();
-    @Getter
-    private final UI ui = new UI(this);
+    private final SoundHandler soundHandler = new SoundHandler();
+    private final KeyHandler keyHandler = new KeyHandler(this, soundHandler);
     // ENTITIES
-    @Getter
     private final Player player = new Player(this, keyHandler, entityHandler);
-    @Getter
+    private final UI ui = new UI(this);
     @Setter
     private Thread gameThread;
     // GAME STATE
-    @Getter
     @Setter
     private GameState gameState;
 
@@ -75,7 +68,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        double drawInterval = (double) 1000000000 / FPS;
+        double NANOSECONDS_PER_SECOND = 1000000000.0;
+        double drawInterval = NANOSECONDS_PER_SECOND / FPS;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
@@ -93,7 +87,7 @@ public class GamePanel extends JPanel implements Runnable {
                 delta--;
             }
 
-            if (timer >= 1000000000) {
+            if (timer >= NANOSECONDS_PER_SECOND) {
                 timer = 0;
             }
         }
@@ -127,24 +121,19 @@ public class GamePanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         Toolkit.getDefaultToolkit().sync();
         super.paintComponent(g);
-
         Graphics2D g2d = (Graphics2D) g;
-        if (gameState == GameState.TITLE_SCREEN) {
-            ui.draw(g2d);
-        } else {
-            // TILE
-            tileManager.draw(g2d);  // Background should be drawn before anything else
-            // OBJECT
-            entityHandler.drawObjects(g2d);
-            // NPCs
-            entityHandler.drawNPCs(g2d);
-            // MONSTERS
-            entityHandler.drawMonsters(g2d);
-            // PLAYER
-            player.draw(g2d);
-            // UI
-            ui.draw(g2d); // UI should be rendered over everything (last)
-        }
+        // TILE - background should be drawn before anything else
+        tileManager.draw(g2d);
+        // OBJECT
+        entityHandler.drawObjects(g2d);
+        // NPCs
+        entityHandler.drawNPCs(g2d);
+        // MONSTERS
+        entityHandler.drawMonsters(g2d);
+        // PLAYER
+        player.draw(g2d);
+        // UI - should be rendered over everything (last)
+        ui.draw(g2d);
 
         g2d.dispose();
     }
@@ -154,20 +143,5 @@ public class GamePanel extends JPanel implements Runnable {
                 worldX - GamePanel.TILE_SIZE < player.getWorldX() + player.getScreenX() &&
                 worldY + GamePanel.TILE_SIZE > player.getWorldY() - player.getScreenY() &&
                 worldY - GamePanel.TILE_SIZE < player.getWorldY() + player.getScreenY();
-    }
-
-    public void playMusic(final String sound) {
-        musicHandler.setFile(sound);
-        musicHandler.play();
-        musicHandler.loop();
-    }
-
-    public void stopMusic() {
-        musicHandler.stop();
-    }
-
-    public void playSoundEffect(final String sound) {
-        soundEffectHandler.setFile(sound);
-        soundEffectHandler.play();
     }
 }

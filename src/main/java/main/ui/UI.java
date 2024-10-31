@@ -57,8 +57,10 @@ public class UI {
         try (InputStream inputStream = getClass().getResourceAsStream("/fonts/Purisa Bold.ttf")) {
             PRUISA_B = Font.createFont(Font.TRUETYPE_FONT, inputStream);
         } catch (FontFormatException e) {
+            System.err.println(e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            System.err.println(e.getMessage());
             e.printStackTrace();
         }
     }

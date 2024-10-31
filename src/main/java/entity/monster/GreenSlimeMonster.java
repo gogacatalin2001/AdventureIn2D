@@ -1,18 +1,16 @@
 package entity.monster;
 
-import com.sun.jdi.Method;
 import entity.Direction;
 import entity.Entity;
 import entity.EntityHandler;
 import main.GamePanel;
+import sound.SoundHandler;
 import util.ImageProperties;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class GreenSlimeMonster extends Entity {
 
@@ -31,12 +29,16 @@ public class GreenSlimeMonster extends Entity {
         maxLife = 4;
         life = maxLife;
         invincibleTimer = 40;
+        hitSound = SoundHandler.HIT_MONSTER_SOUND;
         collisionBox.x = 3;
         collisionBox.y = 18;
         collisionBox.width = 42;
         collisionBox.height = 30;
         collisionBoxDefaultX = collisionBox.x;
         collisionBoxDefaultY = collisionBox.y;
+        attack = 5;
+        defense = 0;
+
     }
 
     @Override
@@ -63,7 +65,6 @@ public class GreenSlimeMonster extends Entity {
         if (damageReceived) {
             actionLockCounter = 0;
             direction = gamePanel.getPlayer().getDirection();
-
             damageReceived = false;
         }
     }

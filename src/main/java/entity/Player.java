@@ -5,6 +5,7 @@ import entity.weapon.WoodenShield;
 import lombok.Getter;
 import lombok.Setter;
 import main.*;
+import sound.SoundHandler;
 import util.ImageProperties;
 
 import java.awt.*;
@@ -75,6 +76,7 @@ public class Player extends Entity {
         currentShield = new WoodenShield(gamePanel, entityHandler);
         attack = getAttackValue();
         defense = getDefenseValue();
+        hitSound = SoundHandler.RECEIVE_DAMAGE_SOUND;
     }
 
 
@@ -146,59 +148,6 @@ public class Player extends Entity {
         return defense = dexterity * currentShield.getDefenseValue();
     }
 
-    private void attack() {
-        spriteCounter++;
-
-        if (spriteCounter < 2) {
-            gamePanel.playSoundEffect(SoundHandler.WEAPON_SWING_SOUND);
-        }
-        if (spriteCounter <= 5) {
-            spriteNumber = 1;
-        } else if (spriteCounter <= 25) {
-            spriteNumber = 2;
-            // Save current player position
-            int currentWorldX = worldX;
-            int currentWorldY = worldY;
-            // Move player to attacked position
-            switch (direction) {
-                case DOWN -> worldY = this.worldY + attackArea.height;
-                case UP -> worldY = this.worldY - attackArea.height;
-                case LEFT -> worldX = this.worldX - attackArea.width;
-                case RIGHT -> worldX = this.worldX + attackArea.width;
-            }
-            // Check collision
-            int monsterIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getMonsters());
-            // Perform attack
-            dealDamage(monsterIndex);
-            // Restore default position
-            worldX = currentWorldX;
-            worldY = currentWorldY;
-        } else {
-            spriteNumber = 1;
-            spriteCounter = 0;
-            action = Action.WALK;
-        }
-    }
-
-    private void dealDamage(int entityIndex) {
-        if (entityIndex >= 0) {
-            Entity entity = entityHandler.getMonsters().get(entityIndex);
-            if (!entity.invincible && !entity.damageReceived) {
-                gamePanel.playSoundEffect(SoundHandler.HIT_MONSTER_SOUND);
-                entity.setLife(entity.getLife() - 1);
-                entity.invincible = true;
-                entity.damageReceived = true;
-
-                if (entity.life <= 0) {
-                    entity.dying = true;
-                }
-            }
-            System.out.println("Attacking entity at (x, y): (" + entity.worldX + "," + entity.worldY + ")");
-        } else {
-            System.out.println("Miss!");
-        }
-    }
-
     @Override
     protected void move() {
         if (!collisionDetected && !keyHandler.isEnterPressed()) {
@@ -213,9 +162,14 @@ public class Player extends Entity {
 
     private void touchMonster(int monsterIndex) {
         if (monsterIndex >= 0 && collisionDetected) {
+            Entity entity = entityHandler.getMonsters().get(monsterIndex);
             if (!invincible) {
-                gamePanel.playSoundEffect(SoundHandler.RECEIVE_DAMAGE_SOUND);
-                life--;
+                gamePanel.getSoundHandler().playSoundEffect(hitSound);
+                int damage = entity.attack - defense;
+                if (damage < 0) {
+                    damage = 0;
+                }
+                life -= damage;
                 invincible = true;
             }
         }

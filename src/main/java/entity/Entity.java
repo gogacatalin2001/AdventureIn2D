@@ -6,6 +6,7 @@ import lombok.Setter;
 import main.CollisionHandler;
 import main.Drawable;
 import main.GamePanel;
+import sound.SoundHandler;
 import util.ImageProperties;
 import util.ImageScalingUtil;
 
@@ -23,10 +24,10 @@ public abstract class Entity implements Drawable {
     protected final GamePanel gamePanel;
     protected final EntityHandler entityHandler;
     // STATE
-    protected String name;
-    @Setter
-    protected int life;
+    protected String name = "";
     protected int maxLife = 6;
+    @Setter
+    protected int life = maxLife;
     @Setter
     protected boolean invincible = false;
     @Setter
@@ -38,7 +39,9 @@ public abstract class Entity implements Drawable {
     protected boolean dying = false;
     protected int dyingCounter = 0;
     protected boolean damageReceived = false;
-    // SPRITE SETTINGS
+    // SOUND
+    protected String hitSound = SoundHandler.NO_SOUND;
+    // SPRITE
     protected List<BufferedImage> images = new ArrayList<>();
     protected int spriteCounter = 0;
     protected int spriteNumber = 1;
@@ -51,7 +54,8 @@ public abstract class Entity implements Drawable {
     protected int screenY;
     protected int actionLockCounter = 0;
     protected Rectangle collisionBox = new Rectangle(0, 0, 48, 48);
-    protected int collisionBoxDefaultX, collisionBoxDefaultY;
+    protected int collisionBoxDefaultX = collisionBox.x;
+    protected int collisionBoxDefaultY = collisionBox.y;
     @Setter
     protected boolean collisionDetected = false;
     @Setter
@@ -59,7 +63,7 @@ public abstract class Entity implements Drawable {
     @Setter
     protected int worldX, worldY; // Position of the entity in the world
     @Setter
-    protected int speed;
+    protected int speed = 1;
     @Setter
     protected Direction direction = Direction.DOWN;
     // INTERACTIONS
@@ -68,15 +72,15 @@ public abstract class Entity implements Drawable {
     // ACTIONS
     protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
     // CHARACTER ATTRIBUTES
-    protected int level;
-    protected int strength;
-    protected int dexterity;
-    protected int intelligence;
-    protected int attack;
-    protected int defense;
-    protected int experience;
-    protected int nextLevelExperience;
-    protected int coins;
+    protected int level = 0;
+    protected int strength = 1;
+    protected int dexterity = 1;
+    protected int intelligence = 1;
+    protected int attack = 1;
+    protected int defense = 1;
+    protected int experience = 0;
+    protected int nextLevelExperience = 5;
+    protected int coins = 0;
     protected Weapon currentWeapon;
     protected Weapon currentShield;
 
@@ -197,6 +201,61 @@ public abstract class Entity implements Drawable {
         }
     }
 
+    protected void attack() {
+        spriteCounter++;
+        gamePanel.getSoundHandler().playSoundEffect(currentWeapon.getSound());
+
+        if (spriteCounter <= 5) {
+            spriteNumber = 1;
+        } else if (spriteCounter <= 25) {
+            spriteNumber = 2;
+            // Save current position
+            int currentWorldX = worldX;
+            int currentWorldY = worldY;
+            // Move to attacked position
+            switch (direction) {
+                case DOWN -> worldY = this.worldY + attackArea.height;
+                case UP -> worldY = this.worldY - attackArea.height;
+                case LEFT -> worldX = this.worldX - attackArea.width;
+                case RIGHT -> worldX = this.worldX + attackArea.width;
+            }
+            // Check collision
+            int entityIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getMonsters());
+            Entity entityToAttack = entityIndex >= 0 ? entityHandler.getMonsters().get(entityIndex) : null;
+            // Perform attack
+            dealDamage(entityToAttack);
+            // Restore default position
+            worldX = currentWorldX;
+            worldY = currentWorldY;
+        } else {
+            spriteNumber = 1;
+            spriteCounter = 0;
+            action = Action.WALK;
+        }
+    }
+
+    protected void dealDamage(final Entity entity) {
+        if (entity != null) {
+            if (!entity.invincible && !entity.damageReceived) {
+                gamePanel.getSoundHandler().playSoundEffect(entity.hitSound);
+                int damage = this.attack - entity.defense;
+                if (damage < 0) {
+                    damage = 0;
+                }
+                entity.life -= damage;
+                entity.invincible = true;
+                entity.damageReceived = true;
+
+                if (entity.life <= 0) {
+                    entity.dying = true;
+                }
+            }
+            System.out.println(this.name + ": attacking entity at (x, y): (" + entity.worldX + "," + entity.worldY + ")");
+        } else {
+            System.out.println("Miss!");
+        }
+    }
+
     @Override
     public void loadImages(String basePath, List<ImageProperties> imageProperties) {
         imageProperties.forEach(properties -> images.add(readImage(basePath, properties.imageName(), properties.width(), properties.height())));
@@ -209,7 +268,8 @@ public abstract class Entity implements Drawable {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(basePath + imageName)));
             image = ImageScalingUtil.scaleImage(image, width, height);
         } catch (IOException e) {
-            System.out.println("Failed to load image: " + basePath + " " + imageName);
+            System.err.println("Failed to load image: " + basePath + " " + imageName);
+            System.err.println(e.getMessage());
         }
         return image;
     }

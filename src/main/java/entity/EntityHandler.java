@@ -3,13 +3,13 @@ package entity;
 import entity.monster.GreenSlimeMonster;
 import entity.npc.OldManNPC;
 import entity.object.DoorObj;
-import entity.weapon.Weapon;
 import lombok.Getter;
 import main.GamePanel;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EntityHandler {
     private final GamePanel gamePanel;

@@ -2,6 +2,7 @@ package main;
 
 import lombok.Getter;
 import lombok.Setter;
+import sound.SoundHandler;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -9,18 +10,24 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 @Getter
-@Setter
 public class KeyHandler implements KeyListener, MouseListener {
     private final GamePanel gamePanel;
+    private final SoundHandler soundHandler;
+    @Setter
     private boolean upPressed;
+    @Setter
     private boolean downPressed;
+    @Setter
     private boolean leftPressed;
+    @Setter
     private boolean rightPressed;
+    @Setter
     private boolean enterPressed;
     private boolean lmbPressed;
 
-    public KeyHandler(GamePanel gamePanel) {
+    public KeyHandler(GamePanel gamePanel, SoundHandler soundHandler) {
         this.gamePanel = gamePanel;
+        this.soundHandler = soundHandler;
     }
 
     @Override
@@ -54,7 +61,7 @@ public class KeyHandler implements KeyListener, MouseListener {
                 switch (gamePanel.getUi().getCurrentCommand()) {
                     case NEW_GAME -> {
                         gamePanel.setGameState(GameState.PLAY);
-                        gamePanel.playMusic(SoundHandler.THEME_SONG);
+                        soundHandler.playMusic(SoundHandler.THEME_SONG);
                     }
                     case LOAD_GAME -> {
                         // todo add game loading
@@ -111,7 +118,7 @@ public class KeyHandler implements KeyListener, MouseListener {
     public void mousePressed(MouseEvent e) {
 
         switch (e.getButton()) {
-            case MouseEvent.BUTTON1 -> setLmbPressed(true);
+            case MouseEvent.BUTTON1 -> lmbPressed = true;
         }
     }
 
@@ -119,7 +126,7 @@ public class KeyHandler implements KeyListener, MouseListener {
     public void mouseReleased(MouseEvent e) {
 
         switch (e.getButton()) {
-            case MouseEvent.BUTTON1 -> setLmbPressed(false);
+            case MouseEvent.BUTTON1 -> lmbPressed = false;
         }
     }
 
