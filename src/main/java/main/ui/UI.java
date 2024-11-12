@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.*;
+import java.util.List;
 
 public class UI implements Drawable {
     private final GamePanel gamePanel;
@@ -26,6 +28,9 @@ public class UI implements Drawable {
     private Command currentCommand = Command.NEW_GAME;
     @Getter
     private BufferedImage heartFull, heartHalf, heartEmpty;
+    private final List<String> onScreenMessages = new ArrayList<>();
+    private final List<Integer> messageCounters = new ArrayList<>();
+    private final int MESSAGE_DISPLAY_TIME = GamePanel.FPS * 3;
 
     public UI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -42,7 +47,10 @@ public class UI implements Drawable {
 
         switch (gamePanel.getGameState()) {
             case TITLE_SCREEN -> drawTitleScreen();
-            case PLAY -> drawPlayerLife();
+            case PLAY -> {
+                drawPlayerLife();
+                drawOnScreenMessages();
+            }
             case PAUSE -> {
                 drawPauseScreen();
                 drawPlayerLife();
@@ -52,6 +60,35 @@ public class UI implements Drawable {
                 drawPlayerLife();
             }
             case CHARACTER_SCREEN -> drawCharacterScreen();
+        }
+    }
+
+    public void addOnScreenMessage(String text) {
+        onScreenMessages.add(text);
+        messageCounters.add(0);
+    }
+
+    private void drawOnScreenMessages() {
+        int messageX = GamePanel.TILE_SIZE / 2;
+        int messageY = GamePanel.TILE_SIZE * 8;
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 20F));
+
+        for (int i = 0; i < onScreenMessages.size(); i++) {
+            if (onScreenMessages.get(i) != null) {
+                g2d.setColor(Color.BLACK);
+                g2d.drawString(onScreenMessages.get(i), messageX + 2, messageY + 2);
+                g2d.setColor(Color.WHITE);
+                g2d.drawString(onScreenMessages.get(i), messageX, messageY);
+                messageY += 25;
+
+                int counter = messageCounters.get(i) + 1;
+                messageCounters.set(i, counter);
+
+                if (messageCounters.get(i) > MESSAGE_DISPLAY_TIME) {
+                    onScreenMessages.remove(i);
+                    messageCounters.remove(i);
+                }
+            }
         }
     }
 
@@ -290,10 +327,6 @@ public class UI implements Drawable {
         g2d.setColor(windowBorderColor);
         g2d.setStroke(new BasicStroke(5));
         g2d.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
-
-    }
-
-    public void addMessage(String text) {
 
     }
 

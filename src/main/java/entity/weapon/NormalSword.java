@@ -13,7 +13,7 @@ public class NormalSword extends Weapon {
     public NormalSword(GamePanel gp, EntityManager eh) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("sword_normal.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
-        super(gp, eh, "/objects/", imageProperties, 4, 0, SoundManager.WEAPON_SWING_SOUND);
+        super(gp, eh, "/objects/", imageProperties, 1, 0, SoundManager.WEAPON_SWING_SOUND);
         setDefaultValues();
     }
 

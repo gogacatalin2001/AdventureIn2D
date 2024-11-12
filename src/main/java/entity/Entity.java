@@ -243,10 +243,10 @@ public abstract class Entity implements Updatable, DrawableEntity {
                 entity.life -= damage;
                 entity.invincible = true;
                 entity.damageReceived = true;
-                gamePanel.getUi().addMessage(entity.name + " received " + damage + " damage");
+                gamePanel.getUi().addOnScreenMessage(damage + " DAMAGE");
                 if (entity.life <= 0) {
                     entity.dying = true;
-                    gamePanel.getUi().addMessage(this.name + " killed " + entity.name + "!");
+                    gamePanel.getUi().addOnScreenMessage("KILLED " + entity.name);
                 }
             }
             System.out.println(this.name + ": attacking entity at (x, y): (" + entity.worldX + "," + entity.worldY + ")");
