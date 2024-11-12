@@ -4,6 +4,7 @@ import entity.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import entity.object.HeartObj;
+import main.Drawable;
 import main.GamePanel;
 
 import java.awt.*;
@@ -11,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class UI {
+public class UI implements Drawable {
     private final GamePanel gamePanel;
     private Graphics2D g2d;
     private Font PRUISA_B;
@@ -32,6 +33,7 @@ public class UI {
         createHUDObject();
     }
 
+    @Override
     public void draw(final Graphics2D g2d) {
         this.g2d = g2d;
         g2d.setFont(PRUISA_B);
@@ -57,16 +59,16 @@ public class UI {
         try (InputStream inputStream = getClass().getResourceAsStream("/fonts/Purisa Bold.ttf")) {
             PRUISA_B = Font.createFont(Font.TRUETYPE_FONT, inputStream);
         } catch (FontFormatException e) {
+            System.err.println("An error occurred while loading font!");
             System.err.println(e.getMessage());
-            e.printStackTrace();
         } catch (IOException e) {
+            System.err.println("An error occurred reading the font file!");
             System.err.println(e.getMessage());
-            e.printStackTrace();
         }
     }
 
     private void createHUDObject() {
-        HeartObj heart = new HeartObj(gamePanel, gamePanel.getEntityHandler());
+        HeartObj heart = new HeartObj(gamePanel, gamePanel.getEntityManager());
         heartFull = heart.getFull();
         heartHalf = heart.getHalf();
         heartEmpty = heart.getEmpty();
@@ -76,7 +78,6 @@ public class UI {
         int textLength = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
         return GamePanel.SCREEN_WIDTH / 2 - textLength / 2;
     }
-
 
     private void drawCharacterScreen() {
         // DRAW FRAME
@@ -289,6 +290,10 @@ public class UI {
         g2d.setColor(windowBorderColor);
         g2d.setStroke(new BasicStroke(5));
         g2d.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
+
+    }
+
+    public void addMessage(String text) {
 
     }
 

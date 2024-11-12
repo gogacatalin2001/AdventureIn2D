@@ -1,7 +1,7 @@
 package tile;
 
 import main.GamePanel;
-import util.ImageScalingUtil;
+import image.ImageScalingUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

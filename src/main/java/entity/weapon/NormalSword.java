@@ -1,19 +1,19 @@
 package entity.weapon;
 
-import entity.EntityHandler;
+import entity.EntityManager;
 import main.GamePanel;
-import sound.SoundHandler;
-import util.ImageProperties;
+import sound.SoundManager;
+import image.ImageProperties;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NormalSword extends Weapon {
 
-    public NormalSword(GamePanel gp, EntityHandler eh) {
+    public NormalSword(GamePanel gp, EntityManager eh) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("sword_normal.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
-        super(gp, eh, "/objects/", imageProperties, 4, 0, SoundHandler.WEAPON_SWING_SOUND);
+        super(gp, eh, "/objects/", imageProperties, 4, 0, SoundManager.WEAPON_SWING_SOUND);
         setDefaultValues();
     }
 

@@ -2,7 +2,7 @@ package main;
 
 import lombok.Getter;
 import lombok.Setter;
-import sound.SoundHandler;
+import sound.SoundManager;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -12,7 +12,7 @@ import java.awt.event.MouseListener;
 @Getter
 public class KeyHandler implements KeyListener, MouseListener {
     private final GamePanel gamePanel;
-    private final SoundHandler soundHandler;
+    private final SoundManager soundManager;
     @Setter
     private boolean upPressed;
     @Setter
@@ -25,9 +25,9 @@ public class KeyHandler implements KeyListener, MouseListener {
     private boolean enterPressed;
     private boolean lmbPressed;
 
-    public KeyHandler(GamePanel gamePanel, SoundHandler soundHandler) {
+    public KeyHandler(GamePanel gamePanel, SoundManager soundManager) {
         this.gamePanel = gamePanel;
-        this.soundHandler = soundHandler;
+        this.soundManager = soundManager;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class KeyHandler implements KeyListener, MouseListener {
                 switch (gamePanel.getUi().getCurrentCommand()) {
                     case NEW_GAME -> {
                         gamePanel.setGameState(GameState.PLAY);
-                        soundHandler.playMusic(SoundHandler.THEME_SONG);
+                        soundManager.playMusic(SoundManager.THEME_SONG);
                     }
                     case LOAD_GAME -> {
                         // todo add game loading

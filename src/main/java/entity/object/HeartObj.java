@@ -1,10 +1,10 @@
 package entity.object;
 
 import entity.Entity;
-import entity.EntityHandler;
+import entity.EntityManager;
 import lombok.Getter;
 import main.GamePanel;
-import util.ImageProperties;
+import image.ImageProperties;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -14,7 +14,7 @@ public class HeartObj extends Entity {
 
     private final BufferedImage full, half, empty;
 
-    public HeartObj(GamePanel gp, EntityHandler eh) {
+    public HeartObj(GamePanel gp, EntityManager eh) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("heart_full.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("heart_half.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));

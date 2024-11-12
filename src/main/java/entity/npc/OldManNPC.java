@@ -2,15 +2,15 @@ package entity.npc;
 
 import entity.Direction;
 import entity.Entity;
-import entity.EntityHandler;
+import entity.EntityManager;
 import main.GamePanel;
-import util.ImageProperties;
+import image.ImageProperties;
 
 import java.util.*;
 
 public class OldManNPC extends Entity {
 
-    public OldManNPC(GamePanel gamePanel, EntityHandler eh) {
+    public OldManNPC(GamePanel gamePanel, EntityManager eh) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("oldman_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("oldman_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));

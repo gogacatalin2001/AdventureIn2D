@@ -1,10 +1,10 @@
 package entity.weapon;
 
 import entity.Entity;
-import entity.EntityHandler;
+import entity.EntityManager;
 import lombok.Getter;
 import main.GamePanel;
-import util.ImageProperties;
+import image.ImageProperties;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public abstract class Weapon extends Entity {
     protected int defenseValue;
     protected String sound;
 
-    public Weapon(GamePanel gp, EntityHandler eh, String imageBasePath, List<ImageProperties> imageProperties, int damageValue, int defenseValue, String sound) {
+    public Weapon(GamePanel gp, EntityManager eh, String imageBasePath, List<ImageProperties> imageProperties, int damageValue, int defenseValue, String sound) {
         super(gp, eh, imageBasePath, imageProperties);
         this.damageValue = damageValue;
         this.defenseValue = defenseValue;

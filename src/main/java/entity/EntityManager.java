@@ -9,9 +9,8 @@ import main.GamePanel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class EntityHandler {
+public class EntityManager {
     private final GamePanel gamePanel;
     @Getter
     private final List<Entity> objects = new ArrayList<>();
@@ -20,7 +19,7 @@ public class EntityHandler {
     @Getter
     private final List<Entity> monsters = new ArrayList<>();
 
-    public EntityHandler(GamePanel gp) {
+    public EntityManager(GamePanel gp) {
         this.gamePanel = gp;
     }
 

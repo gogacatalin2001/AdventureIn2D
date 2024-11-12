@@ -2,10 +2,10 @@ package entity.monster;
 
 import entity.Direction;
 import entity.Entity;
-import entity.EntityHandler;
+import entity.EntityManager;
 import main.GamePanel;
-import sound.SoundHandler;
-import util.ImageProperties;
+import sound.SoundManager;
+import image.ImageProperties;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public class GreenSlimeMonster extends Entity {
 
-    public GreenSlimeMonster(GamePanel gp, EntityHandler eh) {
+    public GreenSlimeMonster(GamePanel gp, EntityManager eh) {
         List<ImageProperties> imageMap = new ArrayList<>();
         imageMap.add(new ImageProperties("greenslime_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageMap.add(new ImageProperties("greenslime_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
@@ -29,7 +29,7 @@ public class GreenSlimeMonster extends Entity {
         maxLife = 4;
         life = maxLife;
         invincibleTimer = 40;
-        hitSound = SoundHandler.HIT_MONSTER_SOUND;
+        hitSound = SoundManager.HIT_MONSTER_SOUND;
         collisionBox.x = 3;
         collisionBox.y = 18;
         collisionBox.width = 42;

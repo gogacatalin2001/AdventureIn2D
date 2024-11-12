@@ -1,18 +1,23 @@
 package sound;
 
+import lombok.EqualsAndHashCode;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import java.util.Objects;
 
+@EqualsAndHashCode
 public class Sound {
     private final String filePath;
+    private final String name;
     private Clip clip;
     private boolean playing = false;
 
-    public Sound(String filePath) {
+    public Sound(String name, String filePath) {
         this.filePath = filePath;
+        this.name = name;
         setAudioClip();
     }
 
@@ -28,31 +33,25 @@ public class Sound {
         }
     }
 
-    // Method to play sound with debounce
-    public void playWithDebounce() {
-        if (!playing) {
-            playSound();
-        }
-    }
-
     public void loop() {
-        clip.start();
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        if (clip != null && !playing) {
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
     }
 
     public void stop() {
         if (clip != null && playing) {
             clip.stop();
-            clip.setFramePosition(0); // Reset to start position
+            clip.setFramePosition(0);
             playing = false;
         }
     }
 
-    // Plays the sound
-    private void playSound() {
-        if (clip != null) {
+    public void play() {
+        if (clip != null && !playing) {
             clip.stop();
-            clip.setFramePosition(0); // Reset to start
+            clip.setFramePosition(0);
             clip.start();
             playing = true;
 

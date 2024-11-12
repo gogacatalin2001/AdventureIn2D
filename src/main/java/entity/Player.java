@@ -5,8 +5,8 @@ import entity.weapon.WoodenShield;
 import lombok.Getter;
 import lombok.Setter;
 import main.*;
-import sound.SoundHandler;
-import util.ImageProperties;
+import sound.SoundManager;
+import image.ImageProperties;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,7 +20,7 @@ public class Player extends Entity {
     @Setter
     private boolean collision = false;
 
-    public Player(GamePanel gp, KeyHandler kh, EntityHandler eh) {
+    public Player(GamePanel gp, KeyHandler kh, EntityManager eh) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("boy_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
@@ -72,11 +72,11 @@ public class Player extends Entity {
         experience = 0;
         nextLevelExperience = 5;
         coins = 0;
-        currentWeapon = new NormalSword(gamePanel, entityHandler);
-        currentShield = new WoodenShield(gamePanel, entityHandler);
+        currentWeapon = new NormalSword(gamePanel, entityManager);
+        currentShield = new WoodenShield(gamePanel, entityManager);
         attack = getAttackValue();
         defense = getDefenseValue();
-        hitSound = SoundHandler.RECEIVE_DAMAGE_SOUND;
+        hitSound = SoundManager.RECEIVE_DAMAGE_SOUND;
     }
 
 
@@ -103,14 +103,14 @@ public class Player extends Entity {
                     collisionDetected = false;
                     CollisionHandler.checkTileCollision(this, gamePanel.getTileManager());
                     // objects
-                    int collisionObjectIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getObjects());
+                    int collisionObjectIndex = CollisionHandler.checkEntityCollision(this, entityManager.getObjects());
                     reactToObject(collisionObjectIndex);
                     // NPCs
-                    int npcIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getNpcs());
+                    int npcIndex = CollisionHandler.checkEntityCollision(this, entityManager.getNpcs());
                     System.out.println("NPC: " + npcIndex);
                     interactNPC(npcIndex);
                     // monsters
-                    int monsterIndex = CollisionHandler.checkEntityCollision(this, entityHandler.getMonsters());
+                    int monsterIndex = CollisionHandler.checkEntityCollision(this, entityManager.getMonsters());
                     System.out.println("MON: " + monsterIndex);
                     touchMonster(monsterIndex);
                     // EVENTS
@@ -162,9 +162,9 @@ public class Player extends Entity {
 
     private void touchMonster(int monsterIndex) {
         if (monsterIndex >= 0 && collisionDetected) {
-            Entity entity = entityHandler.getMonsters().get(monsterIndex);
+            Entity entity = entityManager.getMonsters().get(monsterIndex);
             if (!invincible) {
-                gamePanel.getSoundHandler().playSoundEffect(hitSound);
+                gamePanel.getSoundManager().playSound(hitSound);
                 int damage = entity.attack - defense;
                 if (damage < 0) {
                     damage = 0;
@@ -179,7 +179,7 @@ public class Player extends Entity {
         if (npcIndex >= 0) {
             if (keyHandler.isEnterPressed()) {
                 gamePanel.setGameState(GameState.DIALOGUE);
-                entityHandler.getNPC(npcIndex).speak();
+                entityManager.getNPC(npcIndex).speak();
             }
         }
     }

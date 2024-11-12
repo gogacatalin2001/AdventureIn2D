@@ -1,13 +1,13 @@
 package main;
 
 import entity.Entity;
-import entity.EntityHandler;
+import entity.EntityManager;
 import entity.Player;
 import lombok.Getter;
 import lombok.Setter;
 import main.event.EventHandler;
 import main.ui.UI;
-import sound.SoundHandler;
+import sound.SoundManager;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.List;
 
 @Getter
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel extends JPanel implements Runnable, Updatable {
     // TODO: maybe add achievements (finish one level before the theme song finishes playing once??)
     // SCREEN SETTINGS
     public static final int ORIGINAL_TILE_SIZE = 16; // 16x16 tile
@@ -32,11 +32,12 @@ public class GamePanel extends JPanel implements Runnable {
     // GAME SYSTEM
     private final TileManager tileManager = new TileManager(this);
     private final EventHandler eventHandler = new EventHandler(this);
-    private final EntityHandler entityHandler = new EntityHandler(this);
-    private final SoundHandler soundHandler = new SoundHandler();
-    private final KeyHandler keyHandler = new KeyHandler(this, soundHandler);
+    private final EntityManager entityManager = new EntityManager(this);
+    private final SoundManager soundManager = new SoundManager();
+    private final KeyHandler keyHandler = new KeyHandler(this, soundManager);
     // ENTITIES
-    private final Player player = new Player(this, keyHandler, entityHandler);
+    private final Player player = new Player(this, keyHandler, entityManager);
+    @Getter
     private final UI ui = new UI(this);
     @Setter
     private Thread gameThread;
@@ -56,9 +57,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         gameState = GameState.TITLE_SCREEN;
-        entityHandler.setObject();
-        entityHandler.setNPC();
-        entityHandler.setMonsters();
+        entityManager.setObject();
+        entityManager.setNPC();
+        entityManager.setMonsters();
     }
 
     public void startGameThread() {
@@ -95,9 +96,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         if (gameState == GameState.PLAY) {
+            soundManager.update();
             player.update();
-            updateEntities(entityHandler.getNpcs());
-            updateEntities(entityHandler.getMonsters());
+            updateEntities(entityManager.getNpcs());
+            updateEntities(entityManager.getMonsters());
 
         } else if (gameState == GameState.PAUSE) {
             // do nothing
@@ -111,7 +113,7 @@ public class GamePanel extends JPanel implements Runnable {
                     entity.update();
                 }
                 if (!entity.isAlive()) {
-                    entityHandler.removeEntity(entity, entityHandler.getMonsters());
+                    entityManager.removeEntity(entity, entityManager.getMonsters());
                 }
             }
         });
@@ -125,11 +127,11 @@ public class GamePanel extends JPanel implements Runnable {
         // TILE - background should be drawn before anything else
         tileManager.draw(g2d);
         // OBJECT
-        entityHandler.drawObjects(g2d);
+        entityManager.drawObjects(g2d);
         // NPCs
-        entityHandler.drawNPCs(g2d);
+        entityManager.drawNPCs(g2d);
         // MONSTERS
-        entityHandler.drawMonsters(g2d);
+        entityManager.drawMonsters(g2d);
         // PLAYER
         player.draw(g2d);
         // UI - should be rendered over everything (last)
