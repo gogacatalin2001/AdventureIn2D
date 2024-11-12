@@ -38,7 +38,7 @@ public class GreenSlimeMonster extends Entity {
         collisionBoxDefaultY = collisionBox.y;
         attack = 5;
         defense = 0;
-
+        experience = 2;
     }
 
     @Override

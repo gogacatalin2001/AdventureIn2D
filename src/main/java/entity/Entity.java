@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import main.CollisionHandler;
 import main.GamePanel;
+import main.GameState;
 import main.Updatable;
+import sound.Sound;
 import sound.SoundManager;
 import image.ImageProperties;
 import image.ImageScalingUtil;
@@ -72,7 +74,7 @@ public abstract class Entity implements Updatable, DrawableEntity {
     // ACTIONS
     protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
     // CHARACTER ATTRIBUTES
-    protected int level = 0;
+    protected int level = 1;
     protected int strength = 1;
     protected int dexterity = 1;
     protected int intelligence = 1;
@@ -247,11 +249,32 @@ public abstract class Entity implements Updatable, DrawableEntity {
                 if (entity.life <= 0) {
                     entity.dying = true;
                     gamePanel.getUi().addOnScreenMessage("KILLED " + entity.name);
+                    // todo maybe monsters shouldn't level up
+                    experience += entity.experience;
+                    gamePanel.getUi().addOnScreenMessage("GAINED " + entity.experience + " EXP");
+                    checkLevelUp();
                 }
             }
             System.out.println(this.name + ": attacking entity at (x, y): (" + entity.worldX + "," + entity.worldY + ")");
         } else {
             System.out.println("Miss!");
+        }
+    }
+
+    private void checkLevelUp() {
+        if (experience >= nextLevelExperience) {
+            level++;
+            nextLevelExperience = nextLevelExperience + 10;
+            maxLife += 2; // one heart
+            strength++;
+            dexterity++;
+            attack = getAttack();
+            defense = getDefense();
+            gamePanel.getSoundManager().playSound(SoundManager.FANFARE_SOUND);
+            gamePanel.getUi().setCurrentDialogue("You are now level " + level + "\n" +
+                    "You feel stronger!");
+            gamePanel.setGameState(GameState.DIALOGUE);
+
         }
     }
 

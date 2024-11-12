@@ -45,8 +45,7 @@ public class Player extends Entity {
 
     @Override
     protected void setDefaultValues() {
-//        worldX = GamePanel.TILE_SIZE * 23;
-//        worldY = GamePanel.TILE_SIZE * 21;
+
         // SCREEN
         screenX = GamePanel.SCREEN_WIDTH / 2 - (GamePanel.TILE_SIZE / 2);
         screenY = GamePanel.SCREEN_HEIGHT / 2 - (GamePanel.TILE_SIZE / 2);
@@ -62,8 +61,10 @@ public class Player extends Entity {
         attackArea.width = 36;
         attackArea.height = 36;
         // POSITION
-        worldX = GamePanel.TILE_SIZE * 10;
-        worldY = GamePanel.TILE_SIZE * 13;
+        worldX = GamePanel.TILE_SIZE * 23;
+        worldY = GamePanel.TILE_SIZE * 21;
+//        worldX = GamePanel.TILE_SIZE * 10;
+//        worldY = GamePanel.TILE_SIZE * 13;
         // CHARACTER
         speed = 4;
         life = maxLife;

@@ -100,9 +100,6 @@ public class GamePanel extends JPanel implements Runnable, Updatable {
             player.update();
             updateEntities(entityManager.getNpcs());
             updateEntities(entityManager.getMonsters());
-
-        } else if (gameState == GameState.PAUSE) {
-            // do nothing
         }
     }
 
