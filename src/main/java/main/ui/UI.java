@@ -199,10 +199,10 @@ public class UI implements Drawable {
         textX = getRightAlignmentXCoordinate(value, tailX);
         g2d.drawString(value, textX, textY);
         textY += GamePanel.TILE_SIZE / 2;
-        textY += lineHeight;
 
         g2d.drawImage(player.getCurrentWeapon().getSpriteImage(), tailX - GamePanel.TILE_SIZE, textY, null);
         textY += GamePanel.TILE_SIZE / 2;
+        textY += lineHeight;
         g2d.drawImage(player.getCurrentShield().getSpriteImage(), tailX - GamePanel.TILE_SIZE, textY, null);
     }
 
