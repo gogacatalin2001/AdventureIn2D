@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 @Getter
-public class KeyHandler implements KeyListener, MouseListener {
+public class KeyMouseHandler implements KeyListener, MouseListener {
     private final GamePanel gamePanel;
     private final SoundManager soundManager;
     @Setter
@@ -25,7 +25,7 @@ public class KeyHandler implements KeyListener, MouseListener {
     private boolean enterPressed;
     private boolean lmbPressed;
 
-    public KeyHandler(GamePanel gamePanel, SoundManager soundManager) {
+    public KeyMouseHandler(GamePanel gamePanel, SoundManager soundManager) {
         this.gamePanel = gamePanel;
         this.soundManager = soundManager;
     }
@@ -93,6 +93,8 @@ public class KeyHandler implements KeyListener, MouseListener {
             case KeyEvent.VK_ESCAPE -> gamePanel.setGameState(GameState.PAUSE);
             case KeyEvent.VK_ENTER -> setEnterPressed(true);
             case KeyEvent.VK_C -> gamePanel.setGameState(GameState.CHARACTER_SCREEN);
+            case KeyEvent.VK_BACK_QUOTE -> gamePanel.setDebugging(!gamePanel.isDebugging());
+            case KeyEvent.VK_L ->  gamePanel.loadMap(GameConfig.INITIAL_GAME_MAP);
         }
     }
 

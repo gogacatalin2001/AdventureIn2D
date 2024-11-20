@@ -93,11 +93,11 @@ public class EventHandler {
     }
 
     private void healingPool(final int col, final int row, final GameState gameState) {
-        if (gamePanel.getKeyHandler().isEnterPressed() && !eventCollisionBox[col][row].eventTriggered) {
+        if (gamePanel.getKeyMouseHandler().isEnterPressed() && !eventCollisionBox[col][row].eventTriggered) {
             gamePanel.setGameState(gameState);
             gamePanel.getUi().setCurrentDialogue("You drank water. Your life has been \nrestored!");
             gamePanel.getPlayer().setLife(gamePanel.getPlayer().getMaxLife());
         }
-        gamePanel.getKeyHandler().setEnterPressed(false);
+        gamePanel.getKeyMouseHandler().setEnterPressed(false);
     }
 }

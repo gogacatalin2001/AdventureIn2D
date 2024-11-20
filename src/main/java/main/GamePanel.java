@@ -34,9 +34,9 @@ public class GamePanel extends JPanel implements Runnable, Updatable {
     private final EventHandler eventHandler = new EventHandler(this);
     private final EntityManager entityManager = new EntityManager(this);
     private final SoundManager soundManager = new SoundManager();
-    private final KeyHandler keyHandler = new KeyHandler(this, soundManager);
+    private final KeyMouseHandler keyMouseHandler = new KeyMouseHandler(this, soundManager);
     // ENTITIES
-    private final Player player = new Player(this, keyHandler, entityManager);
+    private final Player player = new Player(this, keyMouseHandler, entityManager);
     @Getter
     private final UI ui = new UI(this);
     @Setter
@@ -44,13 +44,15 @@ public class GamePanel extends JPanel implements Runnable, Updatable {
     // GAME STATE
     @Setter
     private GameState gameState;
+    @Setter
+    private boolean debugging = false;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
-        this.addKeyListener(keyHandler);
-        this.addMouseListener(keyHandler);
+        this.addKeyListener(keyMouseHandler);
+        this.addMouseListener(keyMouseHandler);
         this.setFocusable(true);
         setupGame();
     }
@@ -137,10 +139,19 @@ public class GamePanel extends JPanel implements Runnable, Updatable {
         g2d.dispose();
     }
 
-    public boolean isWhitinScreenBoundaries(int worldX, int worldY) {
+    public boolean isWhitinScreenBoundaries(final int worldX, final int worldY) {
         return worldX + GamePanel.TILE_SIZE > player.getWorldX() - player.getScreenX() &&
                 worldX - GamePanel.TILE_SIZE < player.getWorldX() + player.getScreenX() &&
                 worldY + GamePanel.TILE_SIZE > player.getWorldY() - player.getScreenY() &&
                 worldY - GamePanel.TILE_SIZE < player.getWorldY() + player.getScreenY();
+    }
+
+    /**
+     * The map file must be saved before reloading for changes to be visible.
+     * In <b>IntelliJ</b> use <b>Ctrl + F9</b>
+     * @param filePath the path to the map to load
+     */
+    public void loadMap(final String filePath) {
+        tileManager.loadMap(filePath);
     }
 }

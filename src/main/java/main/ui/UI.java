@@ -50,6 +50,9 @@ public class UI implements Drawable {
             case PLAY -> {
                 drawPlayerLife();
                 drawOnScreenMessages();
+                if (gamePanel.isDebugging()) {
+                    showDebugInfo();
+                }
             }
             case PAUSE -> {
                 drawPauseScreen();
@@ -66,6 +69,19 @@ public class UI implements Drawable {
     public void addOnScreenMessage(String text) {
         onScreenMessages.add(text);
         messageCounters.add(0);
+    }
+
+    private void showDebugInfo() {
+        g2d.setFont(new Font("Arial", Font.PLAIN, 20));
+        g2d.setColor(Color.WHITE);
+        int x = 10;
+        int y = 400;
+        int lineHeight = 20;
+
+        g2d.drawString("WorldX: " + gamePanel.getPlayer().getWorldX(), x, y); y += lineHeight;
+        g2d.drawString("WorldY: " + gamePanel.getPlayer().getWorldY(), x, y); y += lineHeight;
+        g2d.drawString("Col: " + (gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getCollisionBox().x) / GamePanel.TILE_SIZE, x, y); y += lineHeight;
+        g2d.drawString("Row: " + (gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getCollisionBox().y) / GamePanel.TILE_SIZE, x, y); y += lineHeight;
     }
 
     private void drawOnScreenMessages() {

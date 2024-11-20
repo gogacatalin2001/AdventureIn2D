@@ -1,5 +1,6 @@
 package tile;
 
+import main.GameConfig;
 import main.GamePanel;
 import image.ImageScalingUtil;
 
@@ -23,7 +24,7 @@ public class TileManager {
         this.tiles = new ArrayList<>();
         mapTileNumber = new int[GamePanel.MAX_WORLD_COL][GamePanel.MAX_WORLD_ROW];
         loadTileImages();
-        loadMap("/maps/worldV2.txt");
+        loadMap(GameConfig.INITIAL_GAME_MAP);
     }
 
     /**

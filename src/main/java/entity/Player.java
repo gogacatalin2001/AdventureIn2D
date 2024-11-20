@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends Entity {
-    private final KeyHandler keyHandler;
+    private final KeyMouseHandler keyMouseHandler;
     // MOVEMENT
     @Getter
     @Setter
     private boolean collision = false;
 
-    public Player(GamePanel gp, KeyHandler kh, EntityManager eh) {
+    public Player(GamePanel gp, KeyMouseHandler kh, EntityManager eh) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("boy_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
@@ -39,7 +39,7 @@ public class Player extends Entity {
         imageProperties.add(new ImageProperties("boy_attack_right_1.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_attack_right_2.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
         super(gp, eh, "/entities/blue_boy/", imageProperties);
-        this.keyHandler = kh;
+        this.keyMouseHandler = kh;
         setDefaultValues();
     }
 
@@ -87,16 +87,16 @@ public class Player extends Entity {
         updateInvincibleState();
         switch (action) {
             case WALK -> {
-                if (keyHandler.isUpPressed() || keyHandler.isDownPressed() ||
-                        keyHandler.isLeftPressed() || keyHandler.isRightPressed() || keyHandler.isEnterPressed()) {
+                if (keyMouseHandler.isUpPressed() || keyMouseHandler.isDownPressed() ||
+                        keyMouseHandler.isLeftPressed() || keyMouseHandler.isRightPressed() || keyMouseHandler.isEnterPressed()) {
                     // MOVEMENT
-                    if (keyHandler.isUpPressed()) {
+                    if (keyMouseHandler.isUpPressed()) {
                         direction = Direction.UP;
-                    } else if (keyHandler.isDownPressed()) {
+                    } else if (keyMouseHandler.isDownPressed()) {
                         direction = Direction.DOWN;
-                    } else if (keyHandler.isLeftPressed()) {
+                    } else if (keyMouseHandler.isLeftPressed()) {
                         direction = Direction.LEFT;
-                    } else if (keyHandler.isRightPressed()) {
+                    } else if (keyMouseHandler.isRightPressed()) {
                         direction = Direction.RIGHT;
                     }
                     // COLLISION
@@ -119,7 +119,7 @@ public class Player extends Entity {
 
                     move();
 
-                    keyHandler.setEnterPressed(false);
+                    keyMouseHandler.setEnterPressed(false);
                     // SPRITE
                     spriteCounter++;
                     if (spriteCounter > SPRITE_UPDATE_SPEED) {
@@ -135,7 +135,7 @@ public class Player extends Entity {
             case ATTACK -> attack();
         }
         // MOUSE
-        if (keyHandler.isLmbPressed()) {
+        if (keyMouseHandler.isLmbPressed()) {
             action = Action.ATTACK;
             System.out.println("LMB pressed");
         }
@@ -151,7 +151,7 @@ public class Player extends Entity {
 
     @Override
     protected void move() {
-        if (!collisionDetected && !keyHandler.isEnterPressed()) {
+        if (!collisionDetected && !keyMouseHandler.isEnterPressed()) {
             switch (direction) {
                 case UP -> worldY -= speed;
                 case DOWN -> worldY += speed;
@@ -178,7 +178,7 @@ public class Player extends Entity {
 
     private void interactNPC(int npcIndex) {
         if (npcIndex >= 0) {
-            if (keyHandler.isEnterPressed()) {
+            if (keyMouseHandler.isEnterPressed()) {
                 gamePanel.setGameState(GameState.DIALOGUE);
                 entityManager.getNPC(npcIndex).speak();
             }
