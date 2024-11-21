@@ -10,14 +10,16 @@ import java.util.Objects;
 
 @EqualsAndHashCode
 public class Sound {
+    public final int soundFrameDelay; // Delay in frames, e.g., 0.25s
     private final String filePath;
     private final String name;
     private Clip clip;
     private boolean playing = false;
 
-    public Sound(String name, String filePath) {
+    public Sound(String name, String filePath, int soundFrameDelay) {
         this.filePath = filePath;
         this.name = name;
+        this.soundFrameDelay = soundFrameDelay;
         setAudioClip();
     }
 

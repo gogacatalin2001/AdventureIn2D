@@ -2,6 +2,7 @@ package main;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.ui.UIManager;
 import sound.SoundManager;
 
 import java.awt.event.KeyEvent;
@@ -13,6 +14,7 @@ import java.awt.event.MouseListener;
 public class KeyMouseHandler implements KeyListener, MouseListener {
     private final GamePanel gamePanel;
     private final SoundManager soundManager;
+    private final UIManager uiManager;
     @Setter
     private boolean upPressed;
     @Setter
@@ -25,9 +27,10 @@ public class KeyMouseHandler implements KeyListener, MouseListener {
     private boolean enterPressed;
     private boolean lmbPressed;
 
-    public KeyMouseHandler(GamePanel gamePanel, SoundManager soundManager) {
+    public KeyMouseHandler(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        this.soundManager = soundManager;
+        this.soundManager = gamePanel.getSoundManager();
+        this.uiManager = gamePanel.getUiManager();
     }
 
     @Override
@@ -50,25 +53,28 @@ public class KeyMouseHandler implements KeyListener, MouseListener {
     private void handleCharacterScreenState(int code) {
         switch (code) {
             case KeyEvent.VK_C -> gamePanel.setGameState(GameState.PLAY);
+            case KeyEvent.VK_LEFT -> moveInventoryCursor(Direction.LEFT);
+            case KeyEvent.VK_RIGHT -> moveInventoryCursor(Direction.RIGHT);
+            case KeyEvent.VK_UP -> moveInventoryCursor(Direction.UP);
+            case KeyEvent.VK_DOWN -> moveInventoryCursor(Direction.DOWN);
+        }
+    }
+
+    private void moveInventoryCursor(Direction direction) {
+        soundManager.playSound(SoundManager.CURSOR_SOUND);
+        switch (direction) {
+            case UP -> uiManager.decreaseSlotRow();
+            case DOWN -> uiManager.increaseSlotRow();
+            case LEFT -> uiManager.decreaseSlotColumn();
+            case RIGHT -> uiManager.increaseSlotColumn();
         }
     }
 
     private void handleTitleScreenState(int code) {
         switch (code) {
-            case KeyEvent.VK_UP -> gamePanel.getUi().changeCommand(-1);
-            case KeyEvent.VK_DOWN -> gamePanel.getUi().changeCommand(1);
-            case KeyEvent.VK_ENTER -> {
-                switch (gamePanel.getUi().getCurrentCommand()) {
-                    case NEW_GAME -> {
-                        gamePanel.setGameState(GameState.PLAY);
-                        soundManager.playMusic(SoundManager.THEME_SONG);
-                    }
-                    case LOAD_GAME -> {
-                        // todo add game loading
-                    }
-                    case QUIT -> System.exit(0);
-                }
-            }
+            case KeyEvent.VK_UP -> uiManager.changeMenuCommand(-1);
+            case KeyEvent.VK_DOWN -> uiManager.changeMenuCommand(1);
+            case KeyEvent.VK_ENTER -> uiManager.executeMenuCommand();
         }
     }
 

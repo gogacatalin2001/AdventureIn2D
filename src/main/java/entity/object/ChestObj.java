@@ -1,7 +1,6 @@
 package entity.object;
 
 import entity.Entity;
-import entity.EntityManager;
 import main.GamePanel;
 import image.ImageProperties;
 
@@ -10,10 +9,10 @@ import java.util.*;
 
 public class ChestObj extends Entity {
 
-    public ChestObj(GamePanel gp, EntityManager eh) {
+    public ChestObj(GamePanel gp) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("chest.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
-        super(gp, eh, "/objects/", imageProperties);
+        super(gp,  "/objects/", imageProperties);
         name = "Chest";
     }
 

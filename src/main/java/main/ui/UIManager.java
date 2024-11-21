@@ -1,21 +1,27 @@
 package main.ui;
 
 import entity.Entity;
+import entity.object.HeartObj;
 import lombok.Getter;
 import lombok.Setter;
-import entity.object.HeartObj;
 import main.Drawable;
 import main.GamePanel;
+import main.GameState;
+import sound.SoundManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
-public class UI implements Drawable {
+public class UIManager implements Drawable {
     private final GamePanel gamePanel;
+    private final SoundManager soundManager;
+    private final List<String> onScreenMessages = new ArrayList<>();
+    private final List<Integer> messageCounters = new ArrayList<>();
+    private final int MESSAGE_DISPLAY_TIME = GamePanel.FPS * 3;
     private Graphics2D g2d;
     private Font PRUISA_B;
     @Getter
@@ -25,15 +31,21 @@ public class UI implements Drawable {
     @Setter
     private boolean gameFinished = false;
     @Getter
-    private Command currentCommand = Command.NEW_GAME;
+    private MenuCommand currentMenuCommand = MenuCommand.NEW_GAME;
     @Getter
     private BufferedImage heartFull, heartHalf, heartEmpty;
-    private final List<String> onScreenMessages = new ArrayList<>();
-    private final List<Integer> messageCounters = new ArrayList<>();
-    private final int MESSAGE_DISPLAY_TIME = GamePanel.FPS * 3;
+    private final int MAX_SLOT_COL = 4;
+    private final int MAX_SLOT_ROWS = 3;
+    private int slotCol = 0;
+    private int slotRow = 0;
 
-    public UI(GamePanel gamePanel) {
+    public enum MenuCommand {
+        NEW_GAME, LOAD_GAME, QUIT, NONE
+    }
+
+    public UIManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
+        this.soundManager = gamePanel.getSoundManager();
         loadFont();
         createHUDObject();
     }
@@ -62,13 +74,106 @@ public class UI implements Drawable {
                 drawDialogueScreen();
                 drawPlayerLife();
             }
-            case CHARACTER_SCREEN -> drawCharacterScreen();
+            case CHARACTER_SCREEN -> {
+                drawCharacterScreen();
+                drawInventory();
+            }
+        }
+    }
+
+    public void changeMenuCommand(final int direction) {
+        int index = currentMenuCommand.ordinal();
+        int size = MenuCommand.values().length;
+        if (index + direction < 0) {
+            index = size - 1;
+        }
+        index = (index + direction) % (size - 1);
+        currentMenuCommand = MenuCommand.values()[index];
+    }
+
+    public void executeMenuCommand() {
+        switch (currentMenuCommand) {
+            case NEW_GAME -> {
+                gamePanel.setGameState(GameState.PLAY);
+                soundManager.playMusic(SoundManager.THEME_SONG);
+            }
+            case LOAD_GAME -> {
+                // todo add game loading
+            }
+            case QUIT -> System.exit(0);
+        }
+    }
+
+    public void drawDialogueScreen() {
+        // WINDOW
+        int x = GamePanel.TILE_SIZE * 2;
+        int y = GamePanel.TILE_SIZE / 2;
+        int width = GamePanel.SCREEN_WIDTH - (GamePanel.TILE_SIZE * 4);
+        int height = GamePanel.TILE_SIZE * 4;
+
+        drawWindow(x, y, width, height);
+
+        x += GamePanel.TILE_SIZE;
+        y += GamePanel.TILE_SIZE;
+        g2d.setFont(g2d.getFont().deriveFont(Font.PLAIN, 20));
+
+        for (String line : currentDialogue.split("\n")) {
+            g2d.drawString(line, x, y);
+            y += 40;
         }
     }
 
     public void addOnScreenMessage(String text) {
         onScreenMessages.add(text);
         messageCounters.add(0);
+    }
+
+    public void increaseSlotColumn() {
+        if (slotCol < MAX_SLOT_COL) {
+            slotCol++;
+        }
+    }
+
+    public void decreaseSlotColumn() {
+        if (slotCol > 0) {
+            slotCol--;
+        }
+    }
+
+    public void increaseSlotRow() {
+        if (slotRow < MAX_SLOT_ROWS) {
+            slotRow++;
+        }
+    }
+
+    public void decreaseSlotRow() {
+        if (slotRow > 0) {
+            slotRow--;
+        }
+    }
+
+    private void drawInventory() {
+        // WINDOW
+        final int frameX = GamePanel.TILE_SIZE * 9;
+        final int frameY = GamePanel.TILE_SIZE;
+        final int frameWidth = GamePanel.TILE_SIZE * 6;
+        final int frameHeight = GamePanel.TILE_SIZE * 5;
+        drawWindow(frameX, frameY, frameWidth, frameHeight);
+        // SLOT
+        final int slotXStart = frameX + 20;
+        final int slotYStart = frameY + 20;
+        int slotX = slotXStart;
+        int slotY = slotYStart;
+
+        // CURSOR
+        int cursorX = slotXStart + (GamePanel.TILE_SIZE * slotCol);
+        int cursorY = slotYStart + (GamePanel.TILE_SIZE * slotRow);
+        int cursorWidth = GamePanel.TILE_SIZE;
+        int cursorHeight = GamePanel.TILE_SIZE;
+
+        g2d.setColor(Color.WHITE);
+        g2d.setStroke(new BasicStroke(3));
+        g2d.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
     }
 
     private void showDebugInfo() {
@@ -78,10 +183,14 @@ public class UI implements Drawable {
         int y = 400;
         int lineHeight = 20;
 
-        g2d.drawString("WorldX: " + gamePanel.getPlayer().getWorldX(), x, y); y += lineHeight;
-        g2d.drawString("WorldY: " + gamePanel.getPlayer().getWorldY(), x, y); y += lineHeight;
-        g2d.drawString("Col: " + (gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getCollisionBox().x) / GamePanel.TILE_SIZE, x, y); y += lineHeight;
-        g2d.drawString("Row: " + (gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getCollisionBox().y) / GamePanel.TILE_SIZE, x, y); y += lineHeight;
+        g2d.drawString("WorldX: " + gamePanel.getPlayer().getWorldX(), x, y);
+        y += lineHeight;
+        g2d.drawString("WorldY: " + gamePanel.getPlayer().getWorldY(), x, y);
+        y += lineHeight;
+        g2d.drawString("Col: " + (gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getCollisionBox().x) / GamePanel.TILE_SIZE, x, y);
+        y += lineHeight;
+        g2d.drawString("Row: " + (gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getCollisionBox().y) / GamePanel.TILE_SIZE, x, y);
+        y += lineHeight;
     }
 
     private void drawOnScreenMessages() {
@@ -121,7 +230,7 @@ public class UI implements Drawable {
     }
 
     private void createHUDObject() {
-        HeartObj heart = new HeartObj(gamePanel, gamePanel.getEntityManager());
+        HeartObj heart = new HeartObj(gamePanel);
         heartFull = heart.getFull();
         heartHalf = heart.getHalf();
         heartEmpty = heart.getEmpty();
@@ -246,16 +355,6 @@ public class UI implements Drawable {
 
     }
 
-    public void changeCommand(final int direction) {
-        int index = currentCommand.ordinal();
-        int size = Command.values().length;
-        if (index + direction < 0) {
-            index = size - 1;
-        }
-        index = (index + direction) % (size - 1);
-        currentCommand = Command.values()[index];
-    }
-
     private void drawTitleScreen() {
         // BACKGROUND
         g2d.setColor(new Color(50, 80, 70));
@@ -282,7 +381,7 @@ public class UI implements Drawable {
         x = getCenteredTextXCoordinate(text);
         y += GamePanel.TILE_SIZE * 4;
         g2d.drawString(text, x, y);
-        if (currentCommand == Command.NEW_GAME) {
+        if (currentMenuCommand == MenuCommand.NEW_GAME) {
             g2d.drawString(">", x - GamePanel.TILE_SIZE, y);
         }
 
@@ -290,7 +389,7 @@ public class UI implements Drawable {
         x = getCenteredTextXCoordinate(text);
         y += GamePanel.TILE_SIZE;
         g2d.drawString(text, x, y);
-        if (currentCommand == Command.LOAD_GAME) {
+        if (currentMenuCommand == MenuCommand.LOAD_GAME) {
             g2d.drawString(">", x - GamePanel.TILE_SIZE, y);
 
         }
@@ -299,7 +398,7 @@ public class UI implements Drawable {
         x = getCenteredTextXCoordinate(text);
         y += GamePanel.TILE_SIZE;
         g2d.drawString(text, x, y);
-        if (currentCommand == Command.QUIT) {
+        if (currentMenuCommand == MenuCommand.QUIT) {
             g2d.drawString(">", x - GamePanel.TILE_SIZE, y);
 
         }
@@ -315,25 +414,6 @@ public class UI implements Drawable {
         g2d.drawString(text, x, y);
     }
 
-    public void drawDialogueScreen() {
-        // WINDOW
-        int x = GamePanel.TILE_SIZE * 2;
-        int y = GamePanel.TILE_SIZE / 2;
-        int width = GamePanel.SCREEN_WIDTH - (GamePanel.TILE_SIZE * 4);
-        int height = GamePanel.TILE_SIZE * 4;
-
-        drawWindow(x, y, width, height);
-
-        x += GamePanel.TILE_SIZE;
-        y += GamePanel.TILE_SIZE;
-        g2d.setFont(g2d.getFont().deriveFont(Font.PLAIN, 20));
-
-        for (String line : currentDialogue.split("\n")) {
-            g2d.drawString(line, x, y);
-            y += 40;
-        }
-    }
-
     private void drawWindow(final int x, final int y, final int width, final int height) {
         Color windowBackgroundColor = new Color(0, 0, 0, 200);
         g2d.setColor(windowBackgroundColor);
@@ -346,7 +426,4 @@ public class UI implements Drawable {
 
     }
 
-    public enum Command {
-        NEW_GAME, LOAD_GAME, QUIT, NONE
-    }
 }

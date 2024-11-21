@@ -20,7 +20,7 @@ public class Player extends Entity {
     @Setter
     private boolean collision = false;
 
-    public Player(GamePanel gp, KeyMouseHandler kh, EntityManager eh) {
+    public Player(GamePanel gp) {
         List<ImageProperties> imageProperties = new ArrayList<>();
         imageProperties.add(new ImageProperties("boy_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
@@ -38,8 +38,8 @@ public class Player extends Entity {
         imageProperties.add(new ImageProperties("boy_attack_left_2.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_attack_right_1.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
         imageProperties.add(new ImageProperties("boy_attack_right_2.png", GamePanel.TILE_SIZE * 2, GamePanel.TILE_SIZE));
-        super(gp, eh, "/entities/blue_boy/", imageProperties);
-        this.keyMouseHandler = kh;
+        super(gp, "/entities/blue_boy/", imageProperties);
+        this.keyMouseHandler = gp.getKeyMouseHandler();
         setDefaultValues();
     }
 
@@ -73,8 +73,8 @@ public class Player extends Entity {
         experience = 0;
         nextLevelExperience = 5;
         coins = 0;
-        currentWeapon = new NormalSword(gamePanel, entityManager);
-        currentShield = new WoodenShield(gamePanel, entityManager);
+        currentWeapon = new NormalSword(gamePanel);
+        currentShield = new WoodenShield(gamePanel);
         attack = getAttackValue();
         defense = getDefenseValue();
         hitSound = SoundManager.RECEIVE_DAMAGE_SOUND;

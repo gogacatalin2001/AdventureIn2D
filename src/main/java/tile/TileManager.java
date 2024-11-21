@@ -118,7 +118,7 @@ public class TileManager {
             int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
             int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
 
-            if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
+            if (gamePanel.isWithinScreenBoundaries(worldX, worldY)) {
                 g2d.drawImage(tiles.get(tileNumber).getImage(), screenX, screenY, null);
             }
 

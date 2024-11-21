@@ -1,6 +1,6 @@
 package main.event;
 
-import entity.Direction;
+import main.Direction;
 import main.GamePanel;
 import main.GameState;
 
@@ -86,7 +86,7 @@ public class EventHandler {
     private void damagePitEvent(final int col, final int row, final GameState gameState) {
         if (!eventCollisionBox[col][row].eventTriggered) {
             gamePanel.setGameState(gameState);
-            gamePanel.getUi().setCurrentDialogue("You fell into a pit!");
+            gamePanel.getUiManager().setCurrentDialogue("You fell into a pit!");
             gamePanel.getPlayer().setLife(gamePanel.getPlayer().getLife() - 1);
             canTouchEvent = false;
         }
@@ -95,7 +95,7 @@ public class EventHandler {
     private void healingPool(final int col, final int row, final GameState gameState) {
         if (gamePanel.getKeyMouseHandler().isEnterPressed() && !eventCollisionBox[col][row].eventTriggered) {
             gamePanel.setGameState(gameState);
-            gamePanel.getUi().setCurrentDialogue("You drank water. Your life has been \nrestored!");
+            gamePanel.getUiManager().setCurrentDialogue("You drank water. Your life has been \nrestored!");
             gamePanel.getPlayer().setLife(gamePanel.getPlayer().getMaxLife());
         }
         gamePanel.getKeyMouseHandler().setEnterPressed(false);

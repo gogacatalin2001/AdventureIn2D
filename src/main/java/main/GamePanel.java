@@ -6,7 +6,7 @@ import entity.Player;
 import lombok.Getter;
 import lombok.Setter;
 import main.event.EventHandler;
-import main.ui.UI;
+import main.ui.UIManager;
 import sound.SoundManager;
 import tile.TileManager;
 
@@ -34,11 +34,10 @@ public class GamePanel extends JPanel implements Runnable, Updatable {
     private final EventHandler eventHandler = new EventHandler(this);
     private final EntityManager entityManager = new EntityManager(this);
     private final SoundManager soundManager = new SoundManager();
-    private final KeyMouseHandler keyMouseHandler = new KeyMouseHandler(this, soundManager);
+    private final UIManager uiManager = new UIManager(this);
+    private final KeyMouseHandler keyMouseHandler = new KeyMouseHandler(this);
     // ENTITIES
-    private final Player player = new Player(this, keyMouseHandler, entityManager);
-    @Getter
-    private final UI ui = new UI(this);
+    private final Player player = new Player(this);
     @Setter
     private Thread gameThread;
     // GAME STATE
@@ -97,11 +96,14 @@ public class GamePanel extends JPanel implements Runnable, Updatable {
     }
 
     public void update() {
-        if (gameState == GameState.PLAY) {
-            soundManager.update();
-            player.update();
-            updateEntities(entityManager.getNpcs());
-            updateEntities(entityManager.getMonsters());
+        switch (gameState) {
+            case GameState.PLAY -> {
+                soundManager.update();
+                player.update();
+                updateEntities(entityManager.getNpcs());
+                updateEntities(entityManager.getMonsters());
+            }
+            case CHARACTER_SCREEN -> soundManager.update();
         }
     }
 
@@ -133,13 +135,13 @@ public class GamePanel extends JPanel implements Runnable, Updatable {
         entityManager.drawMonsters(g2d);
         // PLAYER
         player.draw(g2d);
-        // UI - should be rendered over everything (last)
-        ui.draw(g2d);
+        // UIManager - should be rendered over everything (last)
+        uiManager.draw(g2d);
 
         g2d.dispose();
     }
 
-    public boolean isWhitinScreenBoundaries(final int worldX, final int worldY) {
+    public boolean isWithinScreenBoundaries(final int worldX, final int worldY) {
         return worldX + GamePanel.TILE_SIZE > player.getWorldX() - player.getScreenX() &&
                 worldX - GamePanel.TILE_SIZE < player.getWorldX() + player.getScreenX() &&
                 worldY + GamePanel.TILE_SIZE > player.getWorldY() - player.getScreenY() &&

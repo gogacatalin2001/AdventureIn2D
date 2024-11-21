@@ -3,11 +3,8 @@ package entity;
 import entity.weapon.Weapon;
 import lombok.Getter;
 import lombok.Setter;
-import main.CollisionHandler;
-import main.GamePanel;
-import main.GameState;
-import main.Updatable;
-import sound.Sound;
+import main.*;
+import main.ui.UIManager;
 import sound.SoundManager;
 import image.ImageProperties;
 import image.ImageScalingUtil;
@@ -24,6 +21,8 @@ import java.util.Objects;
 public abstract class Entity implements Updatable, DrawableEntity {
     protected final GamePanel gamePanel;
     protected final EntityManager entityManager;
+    protected final UIManager uiManager;
+    protected final SoundManager soundManager;
     // STATE
     protected String name = "";
     protected int maxLife = 6;
@@ -86,9 +85,11 @@ public abstract class Entity implements Updatable, DrawableEntity {
     protected Weapon currentWeapon;
     protected Weapon currentShield;
 
-    public Entity(GamePanel gp, EntityManager eh, String imageBasePath, List<ImageProperties> imageProperties) {
+    public Entity(GamePanel gp, String imageBasePath, List<ImageProperties> imageProperties) {
         this.gamePanel = gp;
-        this.entityManager = eh;
+        this.entityManager = gp.getEntityManager();
+        this.uiManager = gp.getUiManager();
+        this.soundManager = gp.getSoundManager();
         loadImages(imageBasePath, imageProperties);
         setDefaultValues();
     }
@@ -140,7 +141,7 @@ public abstract class Entity implements Updatable, DrawableEntity {
         int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
         int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
 
-        if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
+        if (gamePanel.isWithinScreenBoundaries(worldX, worldY)) {
             BufferedImage image = getSpriteImage();
             // Modify alpha when attacked
             if (invincible) {
@@ -192,7 +193,7 @@ public abstract class Entity implements Updatable, DrawableEntity {
         if (dialogueIndex == dialogues.size()) {
             dialogueIndex = 0;
         }
-        gamePanel.getUi().setCurrentDialogue(dialogues.get(dialogueIndex));
+        uiManager.setCurrentDialogue(dialogues.get(dialogueIndex));
         dialogueIndex++;
 
         switch (gamePanel.getPlayer().getDirection()) {
@@ -205,7 +206,7 @@ public abstract class Entity implements Updatable, DrawableEntity {
 
     protected void attack() {
         spriteCounter++;
-        gamePanel.getSoundManager().playSound(currentWeapon.getSound());
+        soundManager.playSound(currentWeapon.getSound());
 
         if (spriteCounter <= 5) {
             spriteNumber = 1;
@@ -239,19 +240,19 @@ public abstract class Entity implements Updatable, DrawableEntity {
     protected void dealDamageToEntity(final Entity entity) {
         if (entity != null) {
             if (!entity.invincible && !entity.damageReceived) {
-                gamePanel.getSoundManager().playSound(entity.hitSound);
+                soundManager.playSound(entity.hitSound);
                 int damage = this.attack - entity.defense;
                 damage = Math.max(damage, 0);
                 entity.life -= damage;
                 entity.invincible = true;
                 entity.damageReceived = true;
-                gamePanel.getUi().addOnScreenMessage(damage + " DAMAGE");
+                uiManager.addOnScreenMessage(damage + " DAMAGE");
                 if (entity.life <= 0) {
                     entity.dying = true;
-                    gamePanel.getUi().addOnScreenMessage("KILLED " + entity.name);
+                    uiManager.addOnScreenMessage("KILLED " + entity.name);
                     // todo maybe monsters shouldn't level up
                     experience += entity.experience;
-                    gamePanel.getUi().addOnScreenMessage("GAINED " + entity.experience + " EXP");
+                    uiManager.addOnScreenMessage("GAINED " + entity.experience + " EXP");
                     checkLevelUp();
                 }
             }
@@ -270,8 +271,8 @@ public abstract class Entity implements Updatable, DrawableEntity {
             dexterity++;
             attack = getAttack();
             defense = getDefense();
-            gamePanel.getSoundManager().playSound(SoundManager.FANFARE_SOUND);
-            gamePanel.getUi().setCurrentDialogue("You are now level " + level + "\n" +
+            soundManager.playSound(SoundManager.FANFARE_SOUND);
+            uiManager.setCurrentDialogue("You are now level " + level + "\n" +
                     "You feel stronger!");
             gamePanel.setGameState(GameState.DIALOGUE);
 

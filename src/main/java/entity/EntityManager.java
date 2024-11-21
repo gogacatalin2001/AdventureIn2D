@@ -24,7 +24,7 @@ public class EntityManager {
     }
 
     public void setObject() {
-        Entity door1 = new DoorObj(gamePanel, this);
+        Entity door1 = new DoorObj(gamePanel);
         door1.setWorldX(GamePanel.TILE_SIZE * 21);
         door1.setWorldY(GamePanel.TILE_SIZE * 22);
         objects.add(door1);
@@ -37,7 +37,7 @@ public class EntityManager {
 
     public void setNPC() {
 
-        Entity oldMan = new OldManNPC(gamePanel, this);
+        Entity oldMan = new OldManNPC(gamePanel);
         oldMan.setWorldX(GamePanel.TILE_SIZE * 21);
         oldMan.setWorldY(GamePanel.TILE_SIZE * 21);
         npcs.add(oldMan);
@@ -52,22 +52,22 @@ public class EntityManager {
     }
 
     public void setMonsters() {
-        Entity slime1 = new GreenSlimeMonster(gamePanel, this);
+        Entity slime1 = new GreenSlimeMonster(gamePanel);
         slime1.setWorldX(GamePanel.TILE_SIZE * 23);
         slime1.setWorldY(GamePanel.TILE_SIZE * 36);
         monsters.add(slime1);
 
-        Entity slime2 = new GreenSlimeMonster(gamePanel, this);
+        Entity slime2 = new GreenSlimeMonster(gamePanel);
         slime2.setWorldX(GamePanel.TILE_SIZE * 23);
         slime2.setWorldY(GamePanel.TILE_SIZE * 37);
         monsters.add(slime2);
 
-        Entity slime3 = new GreenSlimeMonster(gamePanel, this);
+        Entity slime3 = new GreenSlimeMonster(gamePanel);
         slime3.setWorldX(GamePanel.TILE_SIZE * 24);
         slime3.setWorldY(GamePanel.TILE_SIZE * 38);
         monsters.add(slime3);
 
-        Entity slime4 = new GreenSlimeMonster(gamePanel, this);
+        Entity slime4 = new GreenSlimeMonster(gamePanel);
         slime4.setWorldX(GamePanel.TILE_SIZE * 25);
         slime4.setWorldY(GamePanel.TILE_SIZE * 39);
         monsters.add(slime4);

@@ -1,8 +1,7 @@
 package entity.monster;
 
-import entity.Direction;
+import main.Direction;
 import entity.Entity;
-import entity.EntityManager;
 import main.GamePanel;
 import sound.SoundManager;
 import image.ImageProperties;
@@ -14,11 +13,11 @@ import java.util.List;
 
 public class GreenSlimeMonster extends Entity {
 
-    public GreenSlimeMonster(GamePanel gp, EntityManager eh) {
+    public GreenSlimeMonster(GamePanel gp) {
         List<ImageProperties> imageMap = new ArrayList<>();
         imageMap.add(new ImageProperties("greenslime_down_1.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
         imageMap.add(new ImageProperties("greenslime_down_2.png", GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
-        super(gp, eh, "/monsters/", imageMap);
+        super(gp, "/monsters/", imageMap);
         setAction();
     }
 
@@ -83,7 +82,7 @@ public class GreenSlimeMonster extends Entity {
         int screenX = worldX - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
         int screenY = worldY - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
 
-        if (gamePanel.isWhitinScreenBoundaries(worldX, worldY)) {
+        if (gamePanel.isWithinScreenBoundaries(worldX, worldY)) {
             BufferedImage image = getSpriteImage();
             // Modify alpha when attacked
             if (invincible) {
